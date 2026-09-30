@@ -4,7 +4,7 @@
 Projects will be assed based on the next criteria and grading weight:
 - Data analysis and pre-processing [10%]
 - Feature selection [15%]
-- Performance indicators(e.g., loss function, error, quantification, convergence criteria) [10%]
+- Performance indicators (e.g., loss function, error, quantification, convergence criteria) [10%]
 - Hyperparameter tuning [20%]
 - Appropriate use of data [10%] (?)
 - Model selection [20%]
