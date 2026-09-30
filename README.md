@@ -1,6 +1,6 @@
 # EE4C12---Machine-Learning-Project
 - At least one of the models must be a deep neural network (Lecture 5).
-- Deadline: Week 8.
+- Deadline: Week 8 (23.10.2026 23:59).
 ### Task 1
 - Select features for each kind if PQD
 - Implements classifier
