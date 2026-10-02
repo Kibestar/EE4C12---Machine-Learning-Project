@@ -25,7 +25,7 @@
 - Task 1
 - Task 2
 - Conclusions (less than 200 words)
-- Paper? 
+- Paper?
 
 For Task 1 and 2, explanation of your implementation without showing the complete code and
 reasoning of the results are indispensable. However, showing some short key steps in the code
