@@ -35,6 +35,6 @@
 | **Interrupt** | ❌ | ✅ | ❌ | ✅ | ✅ | ❌ | 🟢 | ✅ |
 | **Osc. transient** | 🟢 | 🟢 | 🟢 | ❌ | ❌ | 🔴 | ✅ | 🟢 |
 | **Harmonics** | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ✅ | ❌ |
-| **Voltage fluctuation** | ❌ | 🟢 | 🟢 | 🟢 | ❌ | ❌ | ❌ | ❌ |
+| **Voltage fluctuation** | ❌ | ❌ | 🟢 | 🟢 | ❌ | ❌ | ❌ | ❌ |
 | **Sag w. Harmonics** | ✅ | 🟢 | ❌ | ✅ | ✅ | ✅ | ✅ | ❌ |
 | **Swell w. Harmonics** | ✅ | 🟢 | ✅ | ❌ | ✅ | ✅ | ✅ | ❌ |
