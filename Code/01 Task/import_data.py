@@ -29,9 +29,10 @@ def data_import(Folder: list[str], Features: list[str]) -> tuple[list[np.ndarray
         for filename in os.listdir(data_dir):
             if filename.endswith(".csv"): # Check if the file is a CSV file
                 file = os.path.join(data_dir, filename) # Get the full path to the file
-                data_pd = pd.read_csv(file) # Read the data from the CSV file into a pandas DataFrame
+                data_pd = pd.read_csv(file) # Read the data from the CSV file into a pandas
+
                 # replace the features (features = ["avg abs","sd","max","min","no. pks","sd fma","sd fma 3","no. pt near 0"]) with F1, F2, ...
-                data_pd.columns = [f'F{i+1}' for i in range(len(data_pd.columns))]
+                data_pd.columns = [f'F{i}' for i in range(len(data_pd.columns))]
                 data_pd = data_pd[Features]  # Select the specified features
 
                 # Each row is one sample. The filename supplies its label.
@@ -39,23 +40,23 @@ def data_import(Folder: list[str], Features: list[str]) -> tuple[list[np.ndarray
                 data.extend(samples)
 
                 if fnmatch(filename, "Flicker*"):
-                    label = 0
+                    label = "Flicker"
                 elif fnmatch(filename, "Harmonics*"):
-                    label = 1
+                    label = "Harmonics"
                 elif fnmatch(filename, "Interruption*"):
-                    label = 2
+                    label = "Interruption"
                 elif fnmatch(filename, "Normal*"):
-                    label = 3
+                    label = "Normal"
                 elif fnmatch(filename, "Sag_harmonics*"):
-                    label = 4
+                    label = "Sag_harmonics"
                 elif fnmatch(filename, "Sag*"):
-                    label = 5
+                    label = "Sag"
                 elif fnmatch(filename, "Swell_harmonics*"):
-                    label = 6
+                    label = "Swell_harmonics"
                 elif fnmatch(filename, "Swell*"):
-                    label = 7
+                    label = "Swell"
                 elif fnmatch(filename, "Transient*"):
-                    label = 8
+                    label = "Transient"
                 else:
                     raise ValueError('Unknown class: %s' % (filename))
 
