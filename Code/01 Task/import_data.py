@@ -23,7 +23,7 @@ def data_import(Folder: list[str], Features: list[str]) -> tuple[list[np.ndarray
     for Folder in Folder:
         # Get the path to the data folder and list the files in it
         data_dir = os.path.join(os.getcwd(), Folder)
-        print('Number of files in the dataset folder: ', len(os.listdir(data_dir)))
+        # print('Number of files in the dataset folder: ', len(os.listdir(data_dir)))
 
         # Loop through the files in the data folder and read the data from each file
         for filename in os.listdir(data_dir):
