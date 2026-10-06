@@ -48,3 +48,32 @@ def import_single_noiselevel_data(folder: str) -> pd.DataFrame:
 
     # Concatenate all class dataframes into one
     return pd.concat(dataframes, ignore_index=True)
+
+
+def import_all_noiselevel_data(folders: list[str], add_noise_column: bool = False) -> pd.DataFrame:
+    """
+    Imports CSV files from multiple noise level folders and aggregates them 
+    into a single unified DataFrame.
+
+    Input:
+        folders (list[str]): List of directory paths containing noise level CSV files.
+        add_noise_column (bool): If True, adds a 'noise_level' column identifying source folder.
+    Output:
+        data (pd.DataFrame): Combined DataFrame with feature columns, 'label', and optional 'noise_level'.
+    """
+    dataframes = []
+    
+    for folder in folders:
+        # Reuse existing single-folder loader
+        df = import_single_noiselevel_data(folder)
+        
+        if add_noise_column:
+            # Extract folder name (e.g., 'SNR_20dB' from 'path/to/SNR_20dB')
+            df['noise_level'] = os.path.basename(os.path.normpath(folder))
+            
+        dataframes.append(df)
+
+    if not dataframes:
+        raise ValueError(f"No data could be loaded from the provided folders: {folders}")
+
+    return pd.concat(dataframes, ignore_index=True)
