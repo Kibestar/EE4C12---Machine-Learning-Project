@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-# Global mapping dictionary
+# Global mapping dictionary for PQD class labels
 PQD_INDICES = {
     'Normal': 0,
     'Sag': 1,
@@ -14,37 +14,93 @@ PQD_INDICES = {
     'Flicker': 8
 }
 
+# 1. Positional mapping of raw CSV columns (0-7) to feature names (F1 - F8)
+POSITIONAL_MAPPING = {
+    0: 'F2:std_TmA',         # Col 1 in raw CSV
+    1: 'F3:max_TmA',         # Col 2 in raw CSV
+    2: 'F4:min_TmA',         # Col 3 in raw CSV
+    3: 'F5:num_peaks',       # Col 4 in raw CSV
+    4: 'F6:std_FmA_3_7',     # Col 5 in raw CSV
+    5: 'F7:std_FmA_gt3',     # Col 6 in raw CSV
+    6: 'F1:avg_abs_ST_3rd',  # Col 7 in raw CSV
+    7: 'F8:near_zero_cnt'    # Col 8 in raw CSV
+}
+
+# 2. Desired numerical feature order (F1 to F8)
+FEATURE_ORDER = [
+    'F1:avg_abs_ST_3rd',
+    'F2:std_TmA',
+    'F3:max_TmA',
+    'F4:min_TmA',
+    'F5:num_peaks',
+    'F6:std_FmA_3_7',
+    'F7:std_FmA_gt3',
+    'F8:near_zero_cnt'
+]
+
+
 def import_single_noiselevel_data(folder: str) -> pd.DataFrame:
     """
-    Imports all CSV files for a specific noise level from the given folder and
-    returns a unified DataFrame containing samples and numerical PQD labels.
+    Imports all CSV files for a specific noise level from the given folder,
+    renames feature columns with the 'F<num>:<name>' format, reorders them 
+    sequentially from F1 to F8, and adds numerical PQD labels.
 
     Input:
         folder (str): Directory path containing CSV files for one noise level.
     Output:
-        data (pd.DataFrame): Combined DataFrame with feature columns and 'label'.
+        data (pd.DataFrame): Combined DataFrame with columns F1 to F8 and 'label'.
     """
-    # Filter for CSV files only
     csv_files = [f for f in os.listdir(folder) if f.endswith('.csv')]
-    
     dataframes = []
+
     for file in csv_files:
-        # Get label name from filename (e.g., 'Sag.csv' -> 'Sag')
         label_name = os.path.splitext(file)[0]
-        
         if label_name not in PQD_INDICES:
             print(f"Warning: File '{file}' skipped. Label '{label_name}' not in PQD_INDICES.")
             continue
 
         # Load CSV, treating first column as index
         df = pd.read_csv(os.path.join(folder, file), index_col=0)
-        
-        # Add label index
+
+        # Map positional columns to named features
+        df.columns = [POSITIONAL_MAPPING[i] for i in range(len(df.columns))]
+
+        # Reorder columns explicitly from F1 to F8
+        df = df[FEATURE_ORDER]
+
+        # Add numerical label
         df['label'] = PQD_INDICES[label_name]
         dataframes.append(df)
 
     if not dataframes:
         raise ValueError(f"No valid PQD CSV files found in directory: {folder}")
 
-    # Concatenate all class dataframes into one
+    return pd.concat(dataframes, ignore_index=True)
+
+
+def import_all_noiselevel_data(folders: list[str], add_noise_column: bool = True) -> pd.DataFrame:
+    """
+    Imports CSV files from multiple noise level folders, applies column 
+    reordering (F1 to F8), and aggregates them into a single unified DataFrame.
+
+    Input:
+        folders (list[str]): List of directory paths containing CSV files.
+        add_noise_column (bool): If True, adds a 'noise_level' column identifying source folder.
+    Output:
+        data (pd.DataFrame): Combined DataFrame with feature columns F1 to F8, 'label', 
+                             and optional 'noise_level'.
+    """
+    dataframes = []
+    
+    for folder in folders:
+        df = import_single_noiselevel_data(folder)
+        
+        if add_noise_column:
+            df['noise_level'] = os.path.basename(os.path.normpath(folder))
+            
+        dataframes.append(df)
+
+    if not dataframes:
+        raise ValueError(f"No data could be loaded from the provided folders: {folders}")
+
     return pd.concat(dataframes, ignore_index=True)

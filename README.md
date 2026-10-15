@@ -52,7 +52,8 @@ Projects will be assesd based on the next criteria and grading weight:
 - Window size of the S-Transform
 - How do we choose features?
     - Look at the data and see variation
-    - Reason physically  -->
+    - Reason physically 
+- Why are min data larger than max data for the samples in some csv files (e.g. SNR_noisless/normal.csv)?
 
 # Next Steps
 
