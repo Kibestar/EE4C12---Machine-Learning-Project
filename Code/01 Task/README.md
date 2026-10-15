@@ -51,3 +51,16 @@ Target Label  Accuracy  Precision    Recall  F1 Score
 1    Sag_harmonics  0.962825   0.927904  0.877057  0.900341
 0              Sag  0.947955   0.909551  0.810391  0.850981
 5          Flicker  0.936803   0.833654  0.862413  0.847185
+
+### Feature Naming Convention:
+# 1. Positional mapping of raw CSV columns (0-7) to feature names (F1 - F8)
+POSITIONAL_MAPPING = {
+    0: 'F2:std_TmA',         # Col 1 in raw CSV
+    1: 'F3:max_TmA',         # Col 2 in raw CSV
+    2: 'F4:min_TmA',         # Col 3 in raw CSV
+    3: 'F5:num_peaks',       # Col 4 in raw CSV
+    4: 'F6:std_FmA_3_7',     # Col 5 in raw CSV
+    5: 'F7:std_FmA_gt3',     # Col 6 in raw CSV
+    6: 'F1:avg_abs_ST_3rd',  # Col 7 in raw CSV
+    7: 'F8:near_zero_cnt'    # Col 8 in raw CSV
+}

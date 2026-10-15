@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-# Global mapping dictionary for labels
+# Global mapping dictionary for PQD class labels
 PQD_INDICES = {
     'Normal': 0,
     'Sag': 1,
@@ -14,35 +14,41 @@ PQD_INDICES = {
     'Flicker': 8
 }
 
-# 1. Positional mapping of raw CSV columns (0-7) to feature dicts
+# 1. Positional mapping of raw CSV columns (0-7) to feature names (F1 - F8)
 POSITIONAL_MAPPING = {
-    0: ('Feature 2', 'std_TmA'),         # Col 1 in CSV
-    1: ('Feature 3', 'max_TmA'),         # Col 2 in CSV
-    2: ('Feature 4', 'min_TmA'),         # Col 3 in CSV
-    3: ('Feature 5', 'num_peaks'),       # Col 4 in CSV
-    4: ('Feature 6', 'std_FmA_3_7'),     # Col 5 in CSV
-    5: ('Feature 7', 'std_FmA_gt3'),     # Col 6 in CSV
-    6: ('Feature 1', 'avg_abs_ST_3rd'),  # Col 7 in CSV
-    7: ('Feature 8', 'near_zero_cnt')    # Col 8 in CSV
+    0: 'F2:std_TmA',         # Col 1 in raw CSV
+    1: 'F3:max_TmA',         # Col 2 in raw CSV
+    2: 'F4:min_TmA',         # Col 3 in raw CSV
+    3: 'F5:num_peaks',       # Col 4 in raw CSV
+    4: 'F6:std_FmA_3_7',     # Col 5 in raw CSV
+    5: 'F7:std_FmA_gt3',     # Col 6 in raw CSV
+    6: 'F1:avg_abs_ST_3rd',  # Col 7 in raw CSV
+    7: 'F8:near_zero_cnt'    # Col 8 in raw CSV
 }
 
-# 2. Desired numerical feature order (Feature 1 -> Feature 8)
+# 2. Desired numerical feature order (F1 to F8)
 FEATURE_ORDER = [
-    'avg_abs_ST_3rd', # Feature 1
-    'std_TmA',        # Feature 2
-    'max_TmA',        # Feature 3
-    'min_TmA',        # Feature 4
-    'num_peaks',      # Feature 5
-    'std_FmA_3_7',    # Feature 6
-    'std_FmA_gt3',    # Feature 7
-    'near_zero_cnt'   # Feature 8
+    'F1:avg_abs_ST_3rd',
+    'F2:std_TmA',
+    'F3:max_TmA',
+    'F4:min_TmA',
+    'F5:num_peaks',
+    'F6:std_FmA_3_7',
+    'F7:std_FmA_gt3',
+    'F8:near_zero_cnt'
 ]
 
 
 def import_single_noiselevel_data(folder: str) -> pd.DataFrame:
     """
-    Imports CSV files for a specific noise level, renames feature columns,
-    reorders them sequentially (Feature 1 to Feature 8), and adds the label.
+    Imports all CSV files for a specific noise level from the given folder,
+    renames feature columns with the 'F<num>:<name>' format, reorders them 
+    sequentially from F1 to F8, and adds numerical PQD labels.
+
+    Input:
+        folder (str): Directory path containing CSV files for one noise level.
+    Output:
+        data (pd.DataFrame): Combined DataFrame with columns F1 to F8 and 'label'.
     """
     csv_files = [f for f in os.listdir(folder) if f.endswith('.csv')]
     dataframes = []
@@ -56,13 +62,13 @@ def import_single_noiselevel_data(folder: str) -> pd.DataFrame:
         # Load CSV, treating first column as index
         df = pd.read_csv(os.path.join(folder, file), index_col=0)
 
-        # Rename raw positional columns to named features
-        df.columns = [POSITIONAL_MAPPING[i][1] for i in range(len(df.columns))]
+        # Map positional columns to named features
+        df.columns = [POSITIONAL_MAPPING[i] for i in range(len(df.columns))]
 
-        # Reorder columns explicitly from Feature 1 to Feature 8
+        # Reorder columns explicitly from F1 to F8
         df = df[FEATURE_ORDER]
 
-        # Add label column
+        # Add numerical label
         df['label'] = PQD_INDICES[label_name]
         dataframes.append(df)
 
@@ -75,7 +81,14 @@ def import_single_noiselevel_data(folder: str) -> pd.DataFrame:
 def import_all_noiselevel_data(folders: list[str], add_noise_column: bool = True) -> pd.DataFrame:
     """
     Imports CSV files from multiple noise level folders, applies column 
-    reordering (Feature 1 to 8), and aggregates them into a single DataFrame.
+    reordering (F1 to F8), and aggregates them into a single unified DataFrame.
+
+    Input:
+        folders (list[str]): List of directory paths containing CSV files.
+        add_noise_column (bool): If True, adds a 'noise_level' column identifying source folder.
+    Output:
+        data (pd.DataFrame): Combined DataFrame with feature columns F1 to F8, 'label', 
+                             and optional 'noise_level'.
     """
     dataframes = []
     
