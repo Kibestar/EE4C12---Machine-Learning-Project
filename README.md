@@ -44,14 +44,15 @@ Projects will be assesd based on the next criteria and grading weight:
 - ML pipeline description [5%]
 
 # Questions
-- Paper? 
 - F4 unit? How can the min. (F4) be larger than max. (F3)
+
+<!-- - Paper?
 - Osc. Transient high freq. Harmonics? >f_7?
 - Voltage fluctuations: Subharmonic? or amp. change of normal f_1
 - Window size of the S-Transform
 - How do we choose features?
     - Look at the data and see variation
-    - Reason physically 
+    - Reason physically  -->
 
 # Next Steps
 
