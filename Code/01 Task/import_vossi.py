@@ -16,8 +16,6 @@ from sklearn.model_selection import train_test_split, StratifiedKFold, cross_val
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
 
-# Custom Imports
-from classifier import Classifier
 
 
 
@@ -48,8 +46,17 @@ def data_import(Folder: list[str], Features: list[str]) -> tuple[list[np.ndarray
                 file = os.path.join(data_dir, filename) # Get the full path to the file
                 data_pd = pd.read_csv(file) # Read the data from the CSV file into a pandas
 
-                # replace the features (features = ["avg abs","sd","max","min","no. pks","sd fma","sd fma 3","no. pt near 0"]) with F1, F2, ...
-                data_pd.columns = [f'F{i}' for i in range(len(data_pd.columns))]
+                # replace the features (features = ["avg abs","sd","max","min","no. pks","sd fma","sd fma 3","no. pt near 0"]) with F2, F3, F4, F5, F6, F7, F1, F8.
+                data_pd = data_pd.rename(columns={
+                    "avg abs": "F2",
+                    "sd": "F3",
+                    "max": "F4",
+                    "min": "F5",
+                    "no. pks": "F6",
+                    "sd fma": "F7",
+                    "sd fma 3": "F1",
+                    "no. pt near 0": "F8"
+                })
                 data_pd = data_pd[Features]  # Select the specified features
 
                 # Each row is one sample. The filename supplies its label.
@@ -119,7 +126,7 @@ def find_best_feature_to_drop(files: list, features: list, target_label: str, fe
 
         X_train, X_test, y_train, y_test = train_test_split(data, binary_labels, test_size=0.2, random_state=42, stratify=binary_labels)
 
-        metrics = Classifier(model, X_train, y_train, X_test, y_test, title=f"{model.__class__.__name__} - " + target_label + " - Feature not used: " + str(feature), graph=False)
+        metrics, metrics_test = Classifier(model, X_train, y_train, X_test, y_test, title=f"{model.__class__.__name__} - " + target_label + " - Feature not used: " + str(feature), graph=False)
         # find the best F1 score and the corresponding feature to drop
         if metrics["F1 Score"] > best_f1_local:
             best_f1_local = metrics["F1 Score"]
@@ -162,19 +169,19 @@ def Classifier(clf, x_train, y_train, x_test, y_test, title="Classifier", graph=
         "Recall": np.mean(cv_results['test_recall']),
         "F1 Score": np.mean(cv_results['test_f1']),
     }
-    # # Calculate performance metrics without CV
-    # metrics = {
-    #     "Accuracy": accuracy_score(y_test, y_pred),
-    #     "Precision": precision_score(
-    #         y_test, y_pred, average="macro", zero_division=0
-    #     ),
-    #     "Recall": recall_score(
-    #         y_test, y_pred, average="macro", zero_division=0
-    #     ),
-    #     "F1 Score": f1_score(
-    #         y_test, y_pred, average="macro", zero_division=0
-    #     ),
-    # }
+    # Calculate performance metrics without CV
+    metrics_test = {
+        "Accuracy": accuracy_score(y_test, y_pred),
+        "Precision": precision_score(
+            y_test, y_pred, average="macro", zero_division=0
+        ),
+        "Recall": recall_score(
+            y_test, y_pred, average="macro", zero_division=0
+        ),
+        "F1 Score": f1_score(
+            y_test, y_pred, average="macro", zero_division=0
+        ),
+    }
 
     # Graphic output if graph is True
     # Plot confusion matrix and metrics in a bar chart
@@ -232,4 +239,4 @@ def Classifier(clf, x_train, y_train, x_test, y_test, title="Classifier", graph=
         plt.tight_layout()
         plt.show()
 
-    return metrics
+    return metrics, metrics_test
