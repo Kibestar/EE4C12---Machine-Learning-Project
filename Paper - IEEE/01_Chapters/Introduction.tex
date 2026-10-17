@@ -1,4 +1,25 @@
 \section{Introduction}
+The energy grid is changing. Reasons for this are the increasing penetration of renewable energy sources, the electrification of transportation, and the growing demand for electricity \cite{emmanuelGlobalEnergyDemand2026}. One consequence of these changes is a change in grid quality. While conventional power plants provide a stable and controllable source of electricity, renewable energy sources such as solar and wind are intermittent and can cause fluctuations in voltage and frequency. These issues can lead to a variety of power quality problems \cite{kaurHarmonicDistortionPower2025}. Common power quality issues include voltage sags and swells, interruptions, oscillatory transients, harmonics, voltage fluctuations as well as the combinations of sag/swells with harmonics. \cite{igualQuantificationFeatureImportance2020}. To be able to detect these, machine learning algorithms can be utilized. Underlying to them are features that have to be extracted from the raw data. The extraction process is described in \cite{igualQuantificationFeatureImportance2020} and yields the features \ref{tab:extracted_features}.
 
-Introduce the research problem, its motivation, and the contribution of this
-paper. Cite relevant work with commands such as \verb|\cite{key}|.
+
+\begin{table}[htbp]
+\caption{Description of Extracted Features}
+\label{tab:extracted_features}
+\centering
+\begin{tabularx}{\columnwidth}{c>{\raggedright\arraybackslash}X}
+\hline
+\hline
+\textbf{Feature} & \textbf{Description} \
+\hline
+Feature 1 & Average absolute value of the ST matrix row corresponding to the third harmonic. \
+Feature 2 & Standard deviation of the TmA-plot. \
+Feature 3 & Maximum value of the TmA-plot. \
+Feature 4 & Minimum value of the TmA-plot. \
+Feature 5 & Number of peaks in the TmA-plot with prominence in the range $[0.0005, 0.2]$ plus the number of local minima in the TmA-plot. \
+Feature 6 & Standard deviation of the FmA-plot corresponding to frequencies between the third and seventh harmonics. \
+Feature 7 & Standard deviation of the FmA-plot corresponding to frequencies above the third harmonic. \
+Feature 8 & Number of points near zero, i.e., in the range $[-0.1, 0.1]$, in one cycle minus the typical number of points found in an undistorted signal. \
+\hline
+\hline
+\end{tabularx}
+\end{table}
