@@ -1,5 +1,24 @@
 import os
+from pathlib import Path
 import pandas as pd
+
+
+DATA_ROOT = Path(__file__).resolve().parents[2] / "data"
+
+
+def _resolve_noise_folder(folder: str | os.PathLike[str]) -> Path:
+    """Resolve a noise-level name against the shared Code/data directory."""
+    candidate = Path(folder)
+    if candidate.is_dir():
+        return candidate
+    shared_folder = DATA_ROOT / candidate
+    if shared_folder.is_dir():
+        return shared_folder
+    matching = [path for path in DATA_ROOT.iterdir()
+                if path.is_dir() and path.name.lower() == candidate.name.lower()]
+    if matching:
+        return matching[0]
+    raise FileNotFoundError(f"Data folder does not exist: {folder}")
 
 # Global mapping dictionary for PQD class labels
 PQD_INDICES = {
@@ -50,7 +69,8 @@ def import_single_noiselevel_data(folder: str) -> pd.DataFrame:
     Output:
         data (pd.DataFrame): Combined DataFrame with columns F1 to F8 and 'label'.
     """
-    csv_files = [f for f in os.listdir(folder) if f.endswith('.csv')]
+    folder_path = _resolve_noise_folder(folder)
+    csv_files = [f for f in os.listdir(folder_path) if f.endswith('.csv')]
     dataframes = []
 
     for file in csv_files:
@@ -60,7 +80,7 @@ def import_single_noiselevel_data(folder: str) -> pd.DataFrame:
             continue
 
         # Load CSV, treating first column as index
-        df = pd.read_csv(os.path.join(folder, file), index_col=0)
+        df = pd.read_csv(folder_path / file, index_col=0)
 
         # Map positional columns to named features
         df.columns = [POSITIONAL_MAPPING[i] for i in range(len(df.columns))]
@@ -73,7 +93,7 @@ def import_single_noiselevel_data(folder: str) -> pd.DataFrame:
         dataframes.append(df)
 
     if not dataframes:
-        raise ValueError(f"No valid PQD CSV files found in directory: {folder}")
+        raise ValueError(f"No valid PQD CSV files found in directory: {folder_path}")
 
     return pd.concat(dataframes, ignore_index=True)
 

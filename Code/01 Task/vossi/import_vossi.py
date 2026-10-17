@@ -1,20 +1,34 @@
 # General Imports
 import os
+from pathlib import Path
 import numpy as np
 import pandas as pd
 from fnmatch import fnmatch
 from time import time
-
-# Visualization Imports
-import matplotlib.pyplot as plt
-import matplotlib.image as mpimg
-import seaborn as sns
 
 # Machine Learning Imports
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split, StratifiedKFold, cross_validate
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix
+
+
+DATA_ROOT = Path(__file__).resolve().parents[2] / "data"
+
+
+def _resolve_noise_folder(folder: str | os.PathLike[str]) -> Path:
+    """Resolve a noise-level name against the shared Code/data directory."""
+    candidate = Path(folder)
+    if candidate.is_dir():
+        return candidate
+    shared_folder = DATA_ROOT / candidate
+    if shared_folder.is_dir():
+        return shared_folder
+    matching = [path for path in DATA_ROOT.iterdir()
+                if path.is_dir() and path.name.lower() == candidate.name.lower()]
+    if matching:
+        return matching[0]
+    raise FileNotFoundError(f"Data folder does not exist: {folder}")
 
 
 
@@ -37,13 +51,13 @@ def data_import(Folder: list[str], Features: list[str]) -> tuple[list[np.ndarray
     labels = []
     for folder in Folder:
         # Get the path to the data folder and list the files in it
-        data_dir = os.path.join(os.getcwd(), folder)
+        data_dir = _resolve_noise_folder(folder)
         # print('Number of files in the dataset folder: ', len(os.listdir(data_dir)))
 
         # Loop through the files in the data folder and read the data from each file
         for filename in os.listdir(data_dir):
             if filename.endswith(".csv"): # Check if the file is a CSV file
-                file = os.path.join(data_dir, filename) # Get the full path to the file
+                file = data_dir / filename # Get the full path to the file
                 data_pd = pd.read_csv(file) # Read the data from the CSV file into a pandas
 
                 # replace the features (features = ["avg abs","sd","max","min","no. pks","sd fma","sd fma 3","no. pt near 0"]) with F2, F3, F4, F5, F6, F7, F1, F8.
@@ -186,6 +200,9 @@ def Classifier(clf, x_train, y_train, x_test, y_test, title="Classifier", graph=
     # Graphic output if graph is True
     # Plot confusion matrix and metrics in a bar chart
     if graph:
+        import matplotlib.pyplot as plt
+        import seaborn as sns
+
         print(f"{title} - Iterations: {getattr(clf, 'n_iter_', 'N/A')}")
         # Create a figure with two subplots: one for the confusion matrix and one for the metrics
         fig, axes = plt.subplots(

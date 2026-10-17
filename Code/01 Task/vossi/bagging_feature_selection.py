@@ -8,9 +8,8 @@ from typing import Any, Iterable, Mapping, Sequence
 
 import numpy as np
 import pandas as pd
-from sklearn.base import clone
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import f1_score
+from sklearn.model_selection import StratifiedKFold, cross_validate
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.svm import SVC
@@ -90,7 +89,7 @@ def default_classifiers(random_state: int = 42) -> dict[str, Any]:
     """
     return {
         "logistic_regression": LogisticRegression(
-            class_weight="balanced", max_iter=2000, random_state=random_state
+            class_weight="balanced", max_iter=200, random_state=random_state
         ),
         "linear_svm": SVC(kernel="linear", class_weight="balanced", random_state=random_state),
         "rbf_svm": SVC(kernel="rbf", class_weight="balanced", random_state=random_state),
@@ -102,7 +101,7 @@ def default_classifiers(random_state: int = 42) -> dict[str, Any]:
 
 @dataclass(frozen=True)
 class FeatureSelectionResult:
-    """Store the selected features and bootstrap history for one class/model."""
+    """Store the selected features and cross-validation history for one class/model."""
 
     target_label: str
     classifier: str
@@ -111,49 +110,44 @@ class FeatureSelectionResult:
     history: pd.DataFrame
 
 
-def _bootstrap_score(
+def _cross_validation_score(
     estimator: Any,
     x: pd.DataFrame,
     y: pd.Series,
     features: Sequence[str],
-    rng: np.random.Generator,
-    n_bootstraps: int,
+    n_splits: int,
+    random_state: int,
 ) -> tuple[float, float]:
-    """Score a feature subset using repeated bootstrap out-of-bag samples.
+    """Score a feature subset using stratified k-fold cross-validation.
 
     Args:
-        estimator: Unfitted estimator or pipeline to clone for each bootstrap.
+        estimator: Unfitted estimator evaluated independently in every fold.
         x: Data frame containing all candidate feature columns.
         y: Binary target values for one-vs-rest classification.
         features: Columns used for this particular evaluation.
-        rng: Random number generator controlling bootstrap sampling.
-        n_bootstraps: Number of bootstrap/OOB repetitions.
+        n_splits: Number of stratified folds.
+        random_state: Seed used to shuffle the fold assignments.
 
     Returns:
-        The mean and standard deviation of the OOB binary F1 scores.
+        The mean and standard deviation of the validation binary F1 scores.
     """
-    # ``scores`` contains one F1 value for every usable OOB repetition.
-    scores: list[float] = []
-    # ``indices`` lets us sample rows without changing the original index.
-    indices = np.arange(len(y))
-    for _ in range(n_bootstraps):
-        # ``train_indices`` is the bootstrap training sample; repeated indices
-        # are expected because sampling is performed with replacement.
-        train_indices = rng.choice(indices, size=len(indices), replace=True)
-        # ``out_of_bag`` contains rows not selected for this bootstrap sample.
-        out_of_bag = np.setdiff1d(indices, np.unique(train_indices))
-        # OOB samples are never used to fit or scale the model.
-        if len(out_of_bag) == 0 or y.iloc[train_indices].nunique() < 2:
-            continue
-        # Clone prevents a previous bootstrap from influencing this model.
-        model = clone(estimator)
-        model.fit(x.iloc[train_indices][list(features)], y.iloc[train_indices])
-        prediction = model.predict(x.iloc[out_of_bag][list(features)])
-        # Binary F1 measures performance on the selected class, not the
-        # usually much larger negative class.
-        scores.append(f1_score(y.iloc[out_of_bag], prediction, zero_division=0))
-    if not scores:
-        raise ValueError("No usable out-of-bag bootstrap samples were produced")
+    # ``class_counts`` ensures every fold can contain both binary classes.
+    class_counts = y.value_counts()
+    if class_counts.min() < n_splits:
+        raise ValueError(
+            f"n_splits={n_splits} exceeds the smallest class size "
+            f"({class_counts.min()})"
+        )
+    # The scaler remains inside ``estimator`` and is fitted separately per fold.
+    cv = StratifiedKFold(n_splits=n_splits, shuffle=True, random_state=random_state)
+    scores = cross_validate(
+        estimator,
+        x[list(features)],
+        y,
+        cv=cv,
+        scoring="f1",
+        error_score="raise",
+    )["test_score"]
     return float(np.mean(scores)), float(np.std(scores, ddof=0))
 
 
@@ -164,11 +158,11 @@ def select_features_for_classifier(
     target_label: str,
     *,
     features: Sequence[str] = FEATURES,
-    n_bootstraps: int = 20,
+    n_splits: int = 5,
     min_improvement: float = 0.002,
     random_state: int = 42,
 ) -> FeatureSelectionResult:
-    """Select features for one class using one-vs-rest bootstrap F1 scoring.
+    """Select features for one class using one-vs-rest k-fold F1 scoring.
 
     Args:
         data: Full data frame containing features and the string ``label``.
@@ -176,9 +170,9 @@ def select_features_for_classifier(
         classifier_name: Display name stored in the result.
         target_label: Class converted to the positive one-vs-rest target.
         features: Initial candidate feature columns.
-        n_bootstraps: Bootstrap repetitions for each candidate subset.
+        n_splits: Number of stratified folds for each candidate subset.
         min_improvement: Tolerance for accepting a feature removal.
-        random_state: Seed used by the bootstrap generator.
+        random_state: Seed used to shuffle the cross-validation folds.
 
     Returns:
         A result containing the selected features, final F1 score, and history.
@@ -194,13 +188,13 @@ def select_features_for_classifier(
     # Convert the multiclass labels into the binary target-vs-all task.
     y = data["label"].eq(target_label).astype(int)
     estimator = Pipeline([("scale", StandardScaler()), ("classifier", estimator)])
-    # Reusing this generator makes the selection reproducible for this class.
-    rng = np.random.default_rng(random_state)
     # ``active`` is the current feature subset; it shrinks during elimination.
     active = list(features)
-    # ``history`` records every accepted subset and its bootstrap score.
+    # ``history`` records every accepted subset and its cross-validation score.
     history: list[dict[str, Any]] = []
-    current_score, current_std = _bootstrap_score(estimator, x, y, active, rng, n_bootstraps)
+    current_score, current_std = _cross_validation_score(
+        estimator, x, y, active, n_splits, random_state
+    )
     history.append({"classifier": classifier_name, "features": tuple(active), "removed": None,
                     "mean_f1": current_score, "std_f1": current_std})
 
@@ -211,7 +205,9 @@ def select_features_for_classifier(
         candidates = []
         for candidate in active:
             subset = [feature for feature in active if feature != candidate]
-            mean_f1, std_f1 = _bootstrap_score(estimator, x, y, subset, rng, n_bootstraps)
+            mean_f1, std_f1 = _cross_validation_score(
+                estimator, x, y, subset, n_splits, random_state
+            )
             candidates.append((mean_f1, std_f1, candidate, subset))
         candidate_score, candidate_std, removed, subset = max(candidates, key=lambda item: item[0])
         if candidate_score + min_improvement < current_score:
