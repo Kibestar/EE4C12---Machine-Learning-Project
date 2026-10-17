@@ -93,10 +93,10 @@ def default_classifiers(random_state: int = 42) -> dict[str, Any]:
             class_weight="balanced", max_iter=2000, random_state=random_state
         ),
         "linear_svm": SVC(kernel="linear", class_weight="balanced", random_state=random_state),
-        # "rbf_svm": SVC(kernel="rbf", class_weight="balanced", random_state=random_state),
-        # "decision_tree": DecisionTreeClassifier(
-        #     class_weight="balanced", max_depth=8, random_state=random_state
-        # ),
+        "rbf_svm": SVC(kernel="rbf", class_weight="balanced", random_state=random_state),
+        "decision_tree": DecisionTreeClassifier(
+            class_weight="balanced", max_depth=8, random_state=random_state
+        ),
     }
 
 
@@ -255,3 +255,64 @@ def run_feature_selection(
                 )
             )
     return results
+
+
+def majority_vote_features(
+    results: Sequence[FeatureSelectionResult],
+    *,
+    min_classifiers: int | None = None,
+) -> dict[str, tuple[str, ...]]:
+    """Return one majority-voted feature set for every target class.
+
+    Args:
+        results: Classifier-specific results returned by
+            :func:`run_feature_selection`.
+        min_classifiers: Minimum number of classifiers that must select a
+            feature. By default, a strict majority is required.
+
+    Returns:
+        A mapping from each target class to its recommended feature tuple.
+        If no feature reaches the vote threshold for a class, the feature
+        selected most often is returned so every class has a usable set.
+
+    Raises:
+        ValueError: If no results are supplied or the vote threshold is
+            outside the valid range.
+    """
+    if not results:
+        raise ValueError("At least one feature-selection result is required")
+
+    # Group classifier selections by the class they were trained to detect.
+    results_by_class: dict[str, list[FeatureSelectionResult]] = {}
+    for result in results:
+        results_by_class.setdefault(result.target_label, []).append(result)
+
+    recommendations: dict[str, tuple[str, ...]] = {}
+    for target_label, class_results in results_by_class.items():
+        classifier_count = len(class_results)
+        threshold = min_classifiers or (classifier_count // 2 + 1)
+        if not 1 <= threshold <= classifier_count:
+            raise ValueError(
+                f"min_classifiers must be between 1 and {classifier_count} "
+                f"for class {target_label}"
+            )
+
+        # Count each feature at most once per classifier, even if a malformed
+        # result contains a duplicate feature name.
+        feature_counts = pd.Series(0, index=FEATURES, dtype=int)
+        for result in class_results:
+            selected = set(result.selected_features)
+            feature_counts.loc[feature_counts.index.intersection(selected)] += 1
+
+        voted_features = tuple(
+            feature for feature in FEATURES if feature_counts[feature] >= threshold
+        )
+        if not voted_features:
+            # Keep the output usable when classifiers disagree completely.
+            highest_count = feature_counts.max()
+            voted_features = tuple(
+                feature for feature in FEATURES if feature_counts[feature] == highest_count
+            )
+        recommendations[target_label] = voted_features
+
+    return recommendations
