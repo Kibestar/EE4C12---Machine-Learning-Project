@@ -31,8 +31,17 @@ Conclusion:
 
 
 ### Task 2 
-Intro: We need all features (No unique subset exists for all PQD)
+Intro: 
+We need all features (No unique subset exists for all PQD)
+Structure: Train-Test-split -> 5 fold CV -> Define candidates -> Find best hyperparams through random/grid search -> final eval
 
 DT: 
+
+RF:
+
+MLP:
+
+Conclusion: Bagging of the three
+
 
 
