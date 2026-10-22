@@ -1,5 +1,11 @@
 \section{Multiclass Classification of PQDs}
+% Explain this: Three model types are trained and evaluated for the multiclass classification of PQDs. For the training all features were used, as there is no unique subset from task 1 that is optimal for all PQD classes. Stratified 5-fold cross-validation is used to evaluate each model type and optimize the hyperparameters. 
 \subsection{Decision Tree Classifier}
+% USE Task 2-Paul: Decision Tree (DT) notebook -> Currently only the hyperparameter tuning is done, but the notebook can be extended to include the evaluation of the best model on the test set.
 \subsection{Random Forest Classifier}
+% USE Task 2-Paul: Random Forest (RF) notebook -> Currently only the hyperparameter tuning is done, but the notebook can be extended to include the evaluation of the best model on the test set.
 \subsection{Multilayer Perceptron}
+% USE Task 2-Vossi: MLP notebook -> This already includes extensive hyperparameter tuning and a first version of the evaluation of the best model on the test set. The notebook can be extended, so that its evaluation is more comparable to the other two model types.
 \subsection{Combined (Bagged) Model}
+% A bagged model should be created from the best models of the three model types using majority voting. This bagged model has to be implemented and then evaluated on the test set. The evaluation results of the bagged model should be compared to the evaluation results of the individual model types.
+

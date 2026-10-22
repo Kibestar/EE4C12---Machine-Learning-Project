@@ -1,6 +1,13 @@
 \section{Feature Selection for Recognition of PQDs}
-The eight features in~\autoref{tab:extracted_features} were extracted from the PQD signals using S-transform and statistical analysis. A machine learning model can use these features to classify the PQDs into their respective classes. However, not all features may be equally important for the classification of every PQD class. Thus, as a first step, feature selection is performed to identify the most relevant features for each PQD class.
+The eight features in~\autoref{tab:extracted_features} were extracted from the PQD signals using S-transform and statistical analysis. A machine learning model can use these features to classify the PQDs into their respective classes. However, not all features may be equally important for the classification of every PQD class. Thus, as a first step, feature selection is performed to identify the most relevant features for each PQD class. For this, first physical relationships between the features and the PQDs are analyzed. Then, a graphical and statistical analysis of the features is performed
 \subsection{Physical Feature-PQD Relationships}
 \subsection{Graphical Feature Analysis}
+% Use Task 1-Paul: Feature visualization notebook 
 \subsection{Statistical Feature Analysis}
-\subsection{Binary Classification Performances}
+% Use Task 1-Paul: Feature scoring-> highlight the most important features for each PQD class from both anova f-score and mutual information score.
+
+\subsection{Binary Classification Performance Analysis}
+% Use Task 1-vossi: Bagging_feature_selection notebook
+
+\subsection{Feature Selection Conclusion}
+% Combine the results of the previous sections. Elobarate that different features are important for different PQD classes and similar trends are visible throughout all Analysis methods. BUT, explain also, that different classification models may have different feature importances, as linear models rely on linear feature relationships, while non-linear models can capture more complex relationships etc. 
