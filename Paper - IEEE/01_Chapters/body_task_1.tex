@@ -6,8 +6,74 @@ The eight features in~\autoref{tab:extracted_features} were extracted from the P
 \subsection{Statistical Feature Analysis}
 % Use Task 1-Paul: Feature scoring-> highlight the most important features for each PQD class from both anova f-score and mutual information score.
 
+
+
 \subsection{Binary Classification Performance Analysis}
-% Use Task 1-vossi: Bagging_feature_selection notebook
+% Take the full dataset with all features. Start with 7/8 features and calc. F1 score from CV. Do this for all permutations. Find out which gives the best improvement in F1 and drop it. Repeat for the remaining 7 feature by doing all 6/7 feature combinations. --> continue until no F1 score improvement happens.
+
+% Explain algortihm, refer to block diagram of the algorithm.
+For the binary classification performance analysis, a feature selection algorithm is implemented to iteratively find the ideal subset of features for each PQD class. The feature dropping algorithm is a greedy algorithm that iteratively removes features from the feature set based on their impact on the classification performance. The algorithm starts with the full set of features and evaluates the performance of a classifier using cross-validation. It then identifies the feature whose removal results in the highest improvement in the F1 score. This feature is dropped, and the process is repeated with the remaining features until no further improvement in F1 score can be achieved. If the F1 score stays constant or decreases only marginally, features are also dropped to ensure The final set of selected features is determined by majority voting across different classifiers, ensuring that the most relevant features for each PQD class are retained.
+
+The process is repeated for four different classification models: Logistic Regression, Decision Tree, linear SVM and rbf SVM. They are combined through bagging using majority voting to form a final feature selection result. The results of the majority voting feature selection for the Swell target label are summarized in \autoref{tab:majority_voting_summary}. The recommended features for each target label are presented in \autoref{tab:recommended_features}.
+
+% \begin{figure}[htbp]
+%     \centering
+%     \includegraphics{02_Plots/feature_dropping_algorithm.pdf}
+%     \caption{Block diagram of the feature dropping algorithm.}
+%     \label{fig:feature_dropping_algorithm}
+% \end{figure}
+
+% This procedure is repeated for four different classification models: Logistic Regression, Decision Tree, linear SVM and rbf SVM.
+% They are combined through bagging using majority voting to form a final feature selection result
+%Refer to majority voting example table
+
+\begin{table}[htbp]
+\caption{Majority Voting Feature Selection Summary for Swell Target Label}
+\label{tab:majority_voting_summary}
+\centering
+\begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}X c >{\raggedright\arraybackslash}X c}
+\hline
+\hline
+\textbf{Classifier} & \textbf{Target Label} & \textbf{Selected Features} & \textbf{Cross-Validation F1} \\
+\hline
+Logistic Regression & Swell & F1, F3, F4, F6, F7, F8 & 0.9541 \\
+Linear SVM          & Swell & F1, F2, F3, F5         & 0.9525 \\
+RBF SVM             & Swell & F1, F3, F5             & 0.9993 \\
+Decision Tree       & Swell & F1, F3                 & 0.9987 \\
+\hline
+\hline
+\textbf{Bagging Output (Majority Vote)} & \textbf{Swell} & \textbf{F1, F3} & \textbf{--} \\
+\hline
+\hline
+\end{tabularx}
+\end{table}
+
+% total output table with all PQD classes and their selected features.
+
+\begin{table}[htbp]
+\caption{Recommended Features for Each Target Label}
+\label{tab:recommended_features}
+\centering
+\begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
+\hline
+\hline
+\textbf{Target Label} & \textbf{Recommended Features} \\
+\hline
+Flicker          & F3, F4, F6, F7 \\
+Harmonics        & F1, F2, F3, F4 \\
+Interruption     & F1, F8 \\
+Normal           & F1, F2, F5, F7 \\
+Sag              & F1, F4, F8 \\
+Sag with harmonics   & F1, F2, F6 \\
+Swell            & F1, F3 \\
+Swell with harmonics & F1, F3 \\
+Transient        & F1, F6, F7 \\
+\hline
+\hline
+\end{tabularx}
+\end{table}
+
+
 
 \subsection{Feature Selection Conclusion}
 % Combine the results of the previous sections. Elobarate that different features are important for different PQD classes and similar trends are visible throughout all Analysis methods. BUT, explain also, that different classification models may have different feature importances, as linear models rely on linear feature relationships, while non-linear models can capture more complex relationships etc. 
