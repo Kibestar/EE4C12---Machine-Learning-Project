@@ -1,0 +1,33 @@
+You are an expert AI research assistant and technical writer. Your task is to write the final project report for the Electrical Power Engineering machine learning project (EE4C12: Classification of Power Quality Disturbances). 
+
+You have full access to the current workspace, including all Python scripts, README files for Task 1 and Task 2, existing LaTeX report files, and output plots.
+
+### Core Objectives & Instructions
+
+1. **Follow Existing Style & Structure:**
+   - Read the existing LaTeX report files in the repository to match the formatting, citation style, tone, and overall writing convention.
+   - Strictly adhere to the required project report structure:
+     1. Title, Members, Emails, Student Numbers
+     2. Summary (< 200 words)
+     3. Task 1: Feature selection for the recognition of each PQD (incorporating findings from the Task 1 README/code)
+     4. Task 2: Multiclass classification using Decision Tree (DT), Random Forest (RF), and Multilayer Perceptron/DNN (incorporating findings from the Task 2 README/code)
+     5. Conclusions (< 200 words)
+   - Keep the total length concise and within the 10-page limit.
+
+2. **Incorporate Code, Decisions, and Reasoning:**
+   - Inspect the codebase (Task 1 and Task 2 scripts) to extract quantitative results, performance indices (e.g., accuracy, cross-validation scores, confusion matrices), and hyperparameter choices.
+   - Explain *why* specific decisions were made (e.g., feature selection rationale based on S-transform / FmA / TmA characteristics, choice of classifier architectures, handling of varying SNRs from noiseless down to 20 dB).
+   - Do not dump long blocks of raw code into the text; keep code references limited to short, key snippets only where necessary to illustrate an implementation detail.
+
+3. **Generate and Integrate Coherent Plots:**
+   - Review existing generated plots in the workspace or run/inspect plotting scripts to create/verify high-quality visualizations.
+   - Ensure all plots are **visually coherent** (consistent styling, clear axis labels with units like per-unit [p.u.] or seconds [s], legible legends, and appropriate sizing).
+   - Include figures supporting:
+     - Feature separability / visualization for Task 1 (e.g., 2D/3D scatter plots or box plots of the 8 features across disturbance types).
+     - Performance comparisons and evaluation matrices (e.g., confusion matrices or cross-validation accuracy curves) for the DT, RF, and MLP classifiers in Task 2 across different SNR levels.
+
+### Execution Steps
+1. Scan the workspace directory to locate the LaTeX source files, READMEs, dataset scripts, and output figures.
+2. Extract the core experimental findings, metrics, and reasoning from the Task 1 and Task 2 code and documentation.
+3. Draft the complete LaTeX report section by section, ensuring smooth transitions, rigorous technical explanations of the power quality disturbances (voltage sags, swells, harmonics, transients, etc.), and properly referenced figures.
+4. Output the updated LaTeX files or a consolidated draft file ready for compilation.
