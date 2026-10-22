@@ -1,12 +1,47 @@
 \section{Feature Selection for Recognition of PQDs}
-The eight features in~\autoref{tab:extracted_features} were extracted from the PQD signals using S-transform and statistical analysis. A machine learning model can use these features to classify the PQDs into their respective classes. However, not all features may be equally important for the classification of every PQD class. Thus, as a first step, feature selection is performed to identify the most relevant features for each PQD class. For this, first physical relationships between the features and the PQDs are analyzed. Then, a graphical and statistical analysis of the features is performed
+The eight features in~\autoref{tab:extracted_features} were extracted from the PQD signals using S-transform and statistical analysis. A machine learning model can use these features to classify the PQDs into their respective classes. However, not all features may be equally important for the classification of every PQD class. Thus, as a first step, feature selection is performed to identify the most relevant features for each PQD class. For this, first physical relationships between the features and the PQDs are analyzed. Then, a graphical and statistical analysis of the features is performed. Finally, the features are selected based on a binary classification performance analysis similar to boosting. The results of the feature selection are summarized in the end of this section.
 \subsection{Physical Feature-PQD Relationships}
+%
 \subsection{Graphical Feature Analysis}
 % Use Task 1-Paul: Feature visualization notebook 
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=\columnwidth]{02_Plots/feature_distribution.pdf}
+    \caption{Distribution of the eight extracted features for each PQD class.}\label{fig:feature_distribution}
+\end{figure}
+
 \subsection{Statistical Feature Analysis}
 % Use Task 1-Paul: Feature scoring-> highlight the most important features for each PQD class from both anova f-score and mutual information score.
 
+\begin{figure*}[t]
+    \centering
+    \includegraphics[width=0.9\textwidth]{02_Plots/feature_relevance_heatmaps.pdf}
+    \caption{Heatmaps showing the relevance of each feature for each PQD class based on the F-Score (top) and the Mutual Information (bottom). While the F-Score measures the linear relationship between the features and the PQD classes, the Mutual Information Score captures also non-linear relationships.}
+    \label{fig:feature_relevance_heatmaps}
+\end{figure*}
 
+\begin{table}[htbp]
+\caption{Top three ranked features for each PQD class based on the F-Score and the Mutual Information (MI) Score.}
+\label{tab:pqd_feature_ranking}
+\centering
+\begin{tabularx}{\columnwidth}{l X X}
+\hline
+\hline
+\textbf{PQD Class} & \textbf{Top 3 F-Score} & \textbf{Top 3 MI Score} \\
+\hline
+Normal           & F2, F1, F6 & F1, F2, F7 \\
+Sag              & F4, F1, F3 & F4, F1, F3 \\
+Swell            & F3, F4, F1 & F3, F4, F8 \\
+Interruption     & F8, F4, F2 & F8, F4, F2 \\
+Harmonics        & F1, F2, F6 & F1, F6, F2 \\
+Sag\_harmonics   & F4, F1, F3 & F1, F4, F6 \\
+Swell\_harmonics & F1, F3, F6 & F3, F1, F6 \\
+Transient        & F7, F2, F6 & F7, F2, F1 \\
+Flicker          & F2, F1, F6 & F3, F5, F2 \\
+\hline
+\hline
+\end{tabularx}
+\end{table}
 
 \subsection{Binary Classification Performance Analysis}
 % Take the full dataset with all features. Start with 7/8 features and calc. F1 score from CV. Do this for all permutations. Find out which gives the best improvement in F1 and drop it. Repeat for the remaining 7 feature by doing all 6/7 feature combinations. --> continue until no F1 score improvement happens.
