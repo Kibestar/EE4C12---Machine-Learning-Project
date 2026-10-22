@@ -1,27 +1,113 @@
 \documentclass[journal]{IEEEtran}
 
-% IEEEtran supplies the page layout. Do not add geometry overrides unless the
-% target publication explicitly requests a non-IEEE layout.
-\usepackage[english]{babel}
-\usepackage[T1]{fontenc}
-\usepackage{amsmath,amssymb}
-\usepackage{bm}
-\usepackage{booktabs}
-\usepackage{graphicx}
-\usepackage{siunitx}
-\usepackage{xcolor}
-\usepackage{hyperref}
-\usepackage{tabularx}
+% ==============================================================================
+% 1. Geometry & Page Layout
+% ==============================================================================
+% \usepackage{geometry}
+% \geometry{a4paper, margin=2.5cm}
+% \usepackage{setspace}
+% \usepackage{float}
+% \usepackage{placeins}
+% \usepackage{tikzpagenodes}
 
+% \setlength{\parindent}{0pt}
+% \setlength{\parskip}{0.5em}
+
+% ==============================================================================
+% 2. Language & Fonts
+% ==============================================================================
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+% \usepackage{helvet}
+% \renewcommand{\familydefault}{\sfdefault}
+
+% ==============================================================================
+% 3. Colors
+% ==============================================================================
+\usepackage{xcolor}
+
+\definecolor{titleblue}{rgb}{0.2, 0.4, 0.6}
+\definecolor{dunkelorange}{RGB}{204, 102, 0}
+\definecolor{darkgreen}{rgb}{0.0, 0.4, 0.0}
+\definecolor{codegreen}{rgb}{0,0.5,0.1}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.67}
+\definecolor{backcolour}{rgb}{0.92,0.94,0.96}
+\definecolor{keywordcolor}{rgb}{0.8, 0.2, 0.4}
+
+% TU Delft Colors
+\definecolor{tudelftdarkblue}{RGB}{12,35,64}
+\definecolor{tudelftcyan}{RGB}{0,166,214}
+\definecolor{tudelftblue}{RGB}{0, 118, 194}
+
+% ==============================================================================
+% 4. Math, Science & Code
+% ==============================================================================
+\usepackage{amsmath, amssymb, bm, nicefrac}
+\usepackage{siunitx}
+\usepackage{listings}
+
+\lstdefinestyle{mystyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{keywordcolor},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+\lstset{style=mystyle}
+
+% ==============================================================================
+% 5. Figures, Tables & Formatting
+% ==============================================================================
+\usepackage{graphicx}
+\usepackage[font=normalsize, justification=raggedright, singlelinecheck=false, textfont=bf, labelfont=bf]{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usepackage{tabularx}
+\usepackage{tabularray}
+\usepackage{booktabs}
+\usepackage{titling}
+\usepackage{blindtext}
+\usepackage[normalem]{ulem}
+
+\numberwithin{table}{section}
+\numberwithin{figure}{section}
+
+\newcolumntype{K}[1]{>{\centering\arraybackslash}p{#1}}
+\newcolumntype{C}{>{\centering\arraybackslash}X}
+\newcommand{\imgscale}{0.7}
+
+% ==============================================================================
+% 6. Citations, Hyperlinks & Warnings
+% ==============================================================================
+\usepackage[square,sort,comma,numbers]{natbib}
+\usepackage[colorinlistoftodos]{todonotes}
+\usepackage{etoolbox}
+\usepackage{silence}
+\WarningFilter{hyperref}{Token not allowed in a PDF string}
+
+\usepackage[colorlinks=true, allcolors=titleblue]{hyperref}
+\addto\extrasenglish{%
+  \renewcommand{\sectionautorefname}{Section}%
+  \renewcommand{\subsectionautorefname}{Subsection}%
+  \renewcommand{\subsubsectionautorefname}{Subsubsection}%
+}
 \input{00_Setup/titlepage}
 
 \newif\ifhascitations
 \hascitationsfalse
-\let\originalcite\cite
-\RenewDocumentCommand{\cite}{o m}{%
-    \hascitationstrue
-    \IfNoValueTF{#1}{\originalcite{#2}}{\originalcite[#1]{#2}}%
-}
+\pretocmd{\cite}{\hascitationstrue}{}{}
 
 \graphicspath{{02_Plots/}}
 \hypersetup{
@@ -44,8 +130,8 @@ Keyword one, keyword two, keyword three.
 \end{IEEEkeywords}
 
 \input{01_Chapters/Introduction.tex}
-\input{01_Chapters/Methods.tex}
-\input{01_Chapters/body.tex}
+\input{01_Chapters/body_task_1.tex}
+\input{01_Chapters/body_task_2.tex}
 \input{01_Chapters/conclusion.tex}
 
 \ifhascitations
