@@ -2,6 +2,28 @@
 The eight features in~\autoref{tab:extracted_features} were extracted from the PQD signals using S-transform and statistical analysis. A machine learning model can use these features to classify the PQDs into their respective classes. However, not all features may be equally important for the classification of every PQD class. Thus, as a first step, feature selection is performed to identify the most relevant features for each PQD class. For this, first physical relationships between the features and the PQDs are analyzed. Then, a graphical and statistical analysis of the features is performed. Finally, the features are selected based on a binary classification performance analysis similar to boosting. The results of the feature selection are summarized in the end of this section.
 \subsection{Physical Feature-PQD Relationships}
 %
+\begin{table}[htbp]
+\caption{Summary of physical (electrical) considerations across PQD classes. The markers indicate, if a feature is physically expected to show a difference from the normal case for each PQD. A \ensuremath{\times} indicates that this is likely not the case, a \ensuremath{\circ} indicates that this is possible, and a \ensuremath{\checkmark} indicates that this feature is likely to show a difference to the normal case.}
+\label{tab:physical_considerations}
+\centering
+\begin{tabularx}{\columnwidth}{l *{8}{>{\centering\arraybackslash}X}}
+\hline
+\hline
+\textbf{PQD Class} & \textbf{F1} & \textbf{F2} & \textbf{F3} & \textbf{F4} & \textbf{F5} & \textbf{F6} & \textbf{F7} & \textbf{F8} \\
+\hline
+Normal              & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} \\
+Sag                 & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\times} \\
+Swell               & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\times} \\
+Interrupt           & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\checkmark} \\
+Transient     & \ensuremath{\circ}  & \ensuremath{\circ}  & \ensuremath{\circ}  & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\circ} & \ensuremath{\checkmark} & \ensuremath{\circ}  \\
+Harmonics           & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} \\
+Flicker             & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\circ}  & \ensuremath{\circ}  & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} \\
+Sag\_harmonics   & \ensuremath{\checkmark} & \ensuremath{\circ}  & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} \\
+Swell\_harmonics & \ensuremath{\checkmark} & \ensuremath{\circ}  & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} \\
+\hline
+\hline
+\end{tabularx}
+\end{table}
 \subsection{Graphical Feature Analysis}
 % Use Task 1-Paul: Feature visualization notebook 
 \begin{figure}[t]
