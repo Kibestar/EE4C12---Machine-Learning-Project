@@ -7,6 +7,17 @@ import sys
 
 import matplotlib.pyplot as plt
 
+plt.rcParams.update({
+    "font.family": "serif",
+    "font.serif": ["Times New Roman"],
+    "font.size": 7,           # Matches \footnotesize
+    "axes.labelsize": 8,
+    "xtick.labelsize": 8,
+    "ytick.labelsize": 8,
+    "legend.fontsize": 8,
+    "figure.titlesize": 9
+})
+
 
 CURRENT_DIR = Path(__file__).resolve().parent
 REPOSITORY_ROOT = CURRENT_DIR.parents[2]

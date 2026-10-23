@@ -10,6 +10,8 @@ The best model of each model type is then evaluated on the holdout test set. Fin
 
 \subsection{Decision Tree Classifier}
 % USE Task 2-Paul: Decision Tree (DT) notebook -> Currently only the hyperparameter tuning is done, but the notebook can be extended to include the evaluation of the best model on the test set.
+Decision Trees are a non-linear model that can be used for multiclass classification tasks. They work by recursively partitioning the feature space into smaller regions based on the values of the input features. Each internal node of the tree represents a decision based on a feature, and each leaf node represents a class label. The decision tree is trained on the dataset using stratified 5-fold cross-validation to find the best hyperparameters. The hyperparameters that are tuned include the maximum depth of the tree (max\_depth), the minimum number of samples required to split an internal node (min\_samples\_split), the minimum number of samples required to be at a leaf node (min\_samples\_leaf), and the criterion used to measure the quality of a split (criterion). The results of the hyperparameter tuning are shown in \autoref{tab:dt_evaluation_results}. The best combination of hyperparameters is highlighted in the table. This combination was chosen since it achieved the highest normal precision score.
+
 
 \begin{table}[htbp]
 \caption{Hyperparameter Tuning Results for Decision Tree Classifier}
@@ -32,6 +34,8 @@ min\_samples\_split: 17, min\_samples\_leaf: 1, max\_depth: 16, criterion: log\_
 \end{tabularx}
 \end{table}
 
+The confusion matrix of the best Decision Tree model on the test set is shown in \autoref{fig:dt_confusion_matrix}. The model performs well across all PQD classes, with the highest number of misclassifications occurring between the classes Normal, Transient and Flicker. This is also in agreement with the results of task 1. \autoref{fig:feature_distribution} shows the distribution of the features for the classes. For the classes Normal, Transient and Flicker, the distributions of the features are very similar, which makes it difficult for the model to distinguish between these classes. That result was also already observed in task 1 where those three classes were the most difficult to classify. 
+
 \begin{figure}[htbp]
     \centering
     \includegraphics[width=\linewidth]{decision_tree_confusion_matrix.pdf}
@@ -44,7 +48,7 @@ min\_samples\_split: 17, min\_samples\_leaf: 1, max\_depth: 16, criterion: log\_
 Random Forests are an ensemble learning method that combines multiple decision trees to improve the overall performance and robustness of the model. Each decision tree is trained on a random subset of the training data and features, which helps to reduce overfitting and increase generalization. The final prediction is made by aggregating the predictions of all individual trees, through majority voting. Random Forests are particularly effective for multiclass classification tasks, as they can handle complex decision boundaries and interactions between features. In this work, a Random Forest classifier is trained on the dataset using stratified 5-fold cross-validation to find the best hyperparameters. The hyperparameters that are tuned include the number of trees in the forest (n\_estimators), the maximum depth of each tree (max\_depth), the minimum number of samples required to split an internal node (min\_samples\_split), the minimum number of samples required to be at a leaf node (min\_samples\_leaf), and the criterion used to measure the quality of a split (criterion). The results of the hyperparameter tuning are shown in \autoref{tab:rf_evaluation_results}. The best combination of hyperparameters is highlighted in the table. This combination was chosen since it achieved the highest normal precision score. 
 
 \begin{table}[htbp]
-\caption{Hyperparameter Tuning Results for Random Forest / Extra Trees Classifier}
+\caption{Hyperparameter Tuning Results for Random Forest Classifier}
 \label{tab:rf_evaluation_results}
 \centering
 \small
@@ -65,7 +69,7 @@ n\_estimators: 220, min\_samples\_split: 19, min\_samples\_leaf: 4, max\_depth: 
 \end{table}
 
 
-\autoref{fig:rf_confusion_matrix} shows the confusion matrix of the best Random Forest model on the test set. The model performs well across all PQD classes, with the highest number of misclassifications occurring between the classes Normal, Transient and Flicker. 
+\autoref{fig:rf_confusion_matrix} shows the confusion matrix of the best Random Forest model on the test set. The model performs well across all PQD classes, but as well as for the Decision Tree model, the highest number of misclassifications occur between the classes Normal, Transient and Flicker. 
 
 \begin{figure}[htbp]
     \centering
@@ -79,8 +83,9 @@ n\_estimators: 220, min\_samples\_split: 19, min\_samples\_leaf: 4, max\_depth: 
 % USE Task 2-Vossi: MLP notebook -> This already includes extensive hyperparameter tuning and a first version of the evaluation of the best model on the test set. The notebook can be extended, so that its evaluation is more comparable to the other two model types.
 
 Multilayer Perceptrons (MLPs) are a class of feedforward artificial neural networks that consist of multiple layers of nodes, or neurons, which are interconnected in a directed graph. Each neuron in an MLP applies an activation function to a weighted sum of its inputs, allowing the network to learn complex, non-linear relationships between input features and output targets. To use an MLP for multiclass classification of PQDs, the model has to be trained on the dataset. As described before, this is done using stratified 5-fold cross-validation to find the best hyperparameters. MLPs come with a large number of hyperparameters that can be tuned. The most important ones are the number of hidden layers, the number of neurons in each hidden layer. In addition to that, we can also tune the activation function, the solver, the learning rate, and the regularization parameter. As explained before, random search is used to find the best combination of hyperparameters which is then used to train the final model, which is evaluated on the test set. The results of the hyperparameter tuning are shown in \autoref{tab:mlp_evaluation}. Since there where no obvious patterns visible, it was decided to not further tune the hyperparameters with grid search. The best combination of hyperparameters is highlighted in the table. This combination was chosen since it achieved the second highest normal precision score while having a macro f1-score that is significantly higher than the best normal precision score.
+
 \begin{table}[htbp]
-\caption{Hyperparameter Evaluation Results for First 5 Configurations}
+\caption{Hyperparameter Tuning Results for Multilayer Perceptron Classifier}
 \label{tab:mlp_evaluation}
 \centering
 \small
@@ -108,15 +113,10 @@ Solver: L-BFGS, Activation: Tanh, Hidden Layers: (128, 64, 32), Alpha: 1e-5, LR 
     \label{fig:mlp_confusion_matrix}
 \end{figure}
 
-The confusion matrix of the best model on the test set is shown in \autoref{fig:mlp_confusion_matrix}. It shows that the model performs well across all PQD classes, with the highest number of misclassifications occurring between the classes Normal, Transient and Flicker. This is also in agreement with the results of task 1. \autoref{fig:feature_distribution} shows the distribution of the features for the classes. For the classes Normal, Transient and Flicker, the distributions of the features are very similar, which makes it difficult for the model to distinguish between these classes. That result was also already observed in task 1 where those three classes were the most difficult to classify. 
-
-
-\textbf{Maybe add more context after T1 is done!}
-
-
+The confusion matrix of the best model on the test set is shown in \autoref{fig:mlp_confusion_matrix}.As before, the model performs well across all PQD classes, but the domain of misclassifications is again between the classes Normal, Transient and Flicker.  
 
 \subsection{Combined (Bagged) Model}
-The final results of the three model types are compared in \autoref{tab:task2_final_validation}. The results show overall a very good performance in terms of the macro f1-score. The best model is the Random Forest model, which achieved a macro f1-score of 0.9822. In terms of the normal precision score, they all perform well but not good enough to be used in a real-world application. Here, the best model is again the Random Forest model, which achieved a normal precision score of 0.9281. To achieve a better performance, a bagged model is created from the best models of the three model types using soft voting.
+The final results of the three model types are compared in \autoref{tab:task2_final_validation}. The results show overall a very good performance in terms of the macro f1-score. The best model is the Random Forest model, which achieved a macro f1-score of 0.9822. In terms of the normal precision score, they all perform well but not good enough to be used in a real-world application. Here, the best model is again the Random Forest model, which achieved a normal precision score of 0.9281. To achieve a better performance, a bagged model is created from the best models of the three model types using soft voting which combines the probabilities of the individual models. The bagged model is then evaluated on the test set and the results are compared to the individual models.
 % A bagged model should be created from the best models of the three model types using majority voting. This bagged model has to be implemented and then evaluated on the test set. The evaluation results of the bagged model should be compared to the evaluation results of the individual model types.
 
 \begin{table}[htbp]
@@ -134,13 +134,13 @@ Random Forest & 0.9822 & 0.9281 \\
 MLP & 0.9806 & 0.9276 \\
 \hline
 \hline
-Bagged Model & 0.9844 & 0.9412 \\
+\textbf{Bagged Model} & \textbf{0.9844} & \textbf{0.9412} \\
 \hline
 \hline
 \end{tabularx}
 \end{table}
 
-The bagged model indeed outperforms the individual models in terms of both the macro f1-score and the normal precision score. The bagged model achieved a macro f1-score of 0.9844 and a normal precision score of 0.9412. While the macro f1-score is only slightly increased compared to the best individual model, the normal precision score is significantly improved. This shows that the individual models where struggling with different datapoints which could be correctly classified by the other models. The bagged model is able to combine the strengths of the individual models and achieve a better overall performance. The confusion matrix of the bagged model on the test set is shown in \autoref{fig:bagged_confusion_matrix}. 
+\autoref{tab:task2_final_validation} shows that the bagged model indeed outperforms the individual models in terms of both the macro f1-score and the normal precision score. The bagged model achieved a macro f1-score of 0.9844 and a normal precision score of 0.9412. While the macro f1-score is only slightly increased compared to the best individual model, the normal precision score is significantly improved. This shows that the individual models where struggling with different datapoints which could be correctly classified by the other models. The bagged model is able to combine the strengths of the individual models and achieve a better overall performance. The confusion matrix of the bagged model on the test set is shown in \autoref{fig:bagged_confusion_matrix}. 
 
 
 \begin{figure}[htbp]
