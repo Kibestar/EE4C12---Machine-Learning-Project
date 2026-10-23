@@ -9,12 +9,12 @@ Initially, before analyizing the class data, the physical relationships between 
 \begin{tabularx}{\columnwidth}{l *{8}{>{\centering\arraybackslash}X}}
 \hline
 \hline
-\textbf{PQD Class} & \textbf{F1} & \textbf{F2} & \textbf{F3} & \textbf{F4} & \textbf{F5} & \textbf{F6} & \textbf{F7} & \textbf{F8} \\
+\textbf{PQD class} & \textbf{F1} & \textbf{F2} & \textbf{F3} & \textbf{F4} & \textbf{F5} & \textbf{F6} & \textbf{F7} & \textbf{F8} \\
 \hline
 Normal              & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} \\
 Sag                 & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\circ} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\circ} \\
 Swell               & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\checkmark} & \ensuremath{\circ} & \ensuremath{\circ} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\times} \\
-Interrupt           & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\circ} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\checkmark} \\
+Interruption        & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\circ} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\checkmark} \\
 Transient     & \ensuremath{\times}  & \ensuremath{\circ}  & \ensuremath{\times}  & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\circ} & \ensuremath{\checkmark} & \ensuremath{\circ}  \\
 Harmonics           & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} \\
 Flicker             & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\circ}  & \ensuremath{\circ}  & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} \\
@@ -56,13 +56,8 @@ The MI measures in general the amount of information that a feature provides abo
 \begin{equation}\label{eq:feature_MI-score} % based on shannon entropy
 I(X; Y) = \sum_{y \in Y} \sum_{x \in X} p(x, y) \log \left( \frac{p(x, y)}{p(x)p(y)} \right)
 \end{equation}
-These two statistical measures were used, because they provide different perspectives on the relationship between the features and the PQD classes and are easily implementable using the \texttt{sklearn.feature\_selection} library. The results of the F-Score and MI calculations are shown in \autoref{fig:feature_relevance_heatmaps} as heatmaps.
-\begin{figure*}[t]
-    \centering
-    \includegraphics[width=0.9\textwidth]{02_Plots/feature_relevance_heatmaps.pdf}
-    \caption{Heatmaps showing the relevance of each feature for each PQD class based on the F-Score (top) and the Mutual Information (bottom). While the F-Score measures the linear relationship between the features and the PQD classes, the Mutual Information Score captures also non-linear relationships.}
-    \label{fig:feature_relevance_heatmaps}
-\end{figure*}
+These two statistical measures were used, because they provide different perspectives on the relationship between the features and the PQD classes and are easily implementable using the \texttt{sklearn.feature\_selection} library. The results of the F-Score and MI calculations are shown in \autoref{fig:feature_relevance_heatmaps}.
+
 %only training data and all noiselevels considered
 It should be noted, that from this analysis onwards all noislevels were merged into one dataset, which was shuffled and then seperated into training and test splits (with a test size of 20\%). The heatmaps in \autoref{fig:feature_relevance_heatmaps} are based only on the training data, to avoid any data leakage. The following observations could be made based on this preprocessed dataset. First, the F-Score and MI Score show similar trends, giving a high score to some of the features, that were already identified as relevant for a PQD in the previous sections. An example for this are the high F- and MI scores for F7 and F8 regarding the transient and interruption PQD classes, respectively. However, there are also some differences between the two measures, as well as some feature-PQD combinations that show a high score and were not considered before. This is especially true for the MI, that for example highlights a correlation between the F2 to F5 for the Flicker PQD class. The reason for this is, that the MI can capture non-linear relationships, that can not be captured by the F-Score, as well as the visual analysis of the feature in~\autoref{fig:feature_distribution}. For a preliminary strategy of feature selection, the features were ranked based on their F-Score and MI Score for each PQD class. The top three ranked features for each PQD class are summarized in \autoref{tab:pqd_feature_ranking}.
 \begin{table}[htbp]
@@ -72,17 +67,17 @@ It should be noted, that from this analysis onwards all noislevels were merged i
 \begin{tabularx}{\columnwidth}{l X X}
 \hline
 \hline
-\textbf{PQD Class} & \textbf{Top 3 F-Score} & \textbf{Top 3 MI Score} \\
+\textbf{PQD class} & \textbf{Top 3 F-Score} & \textbf{Top 3 MI Score} \\
 \hline
 Normal           & F2, F1, F6 & F1, F2, F7 \\
 Sag              & F4, F1, F3 & F4, F1, F3 \\
 Swell            & F3, F4, F1 & F3, F4, F8 \\
 Interruption     & F8, F4, F2 & F8, F4, F2 \\
+Transient        & F7, F2, F6 & F7, F2, F1 \\
 Harmonics        & F1, F2, F6 & F1, F6, F2 \\
+Flicker          & F2, F1, F6 & F3, F5, F2 \\
 Sag\_harmonics   & F4, F1, F3 & F1, F4, F6 \\
 Swell\_harmonics & F1, F3, F6 & F3, F1, F6 \\
-Transient        & F7, F2, F6 & F7, F2, F1 \\
-Flicker          & F2, F1, F6 & F3, F5, F2 \\
 \hline
 \hline
 \end{tabularx}
@@ -92,6 +87,7 @@ Flicker          & F2, F1, F6 & F3, F5, F2 \\
 % Take the full dataset with all features. Start with 7/8 features and calc. F1 score from CV. Do this for all permutations. Find out which gives the best improvement in F1 and drop it. Repeat for the remaining 7 feature by doing all 6/7 feature combinations. --> continue until no F1 score improvement happens.
 
 % Explain algortihm, refer to block diagram of the algorithm.
+Finally, the feature selection was performed from a machine learning perspective, by evaluating the classification performance of each feature for each PQD class.
 For the binary classification performance analysis, a feature selection algorithm is implemented to iteratively find the ideal subset of features for each PQD class. The feature dropping algorithm is a greedy algorithm that iteratively removes features from the feature set based on their impact on the classification performance. The algorithm starts with the full set of features and evaluates the performance of a classifier using cross-validation. It then identifies the feature whose removal results in the highest improvement in the F1 score. This feature is dropped, and the process is repeated with the remaining features until no further improvement in F1 score can be achieved. If the F1 score stays constant or decreases only marginally, features are also dropped. This ensures that features are only selected if the contribute significantly. That way the resulting subset will have the best score with the least computational effort. 
 
 To determine a final set of selected features for each PQD class, which is robust across different classifiers, the feature dropping algorithm is applied to four different classification models: Logistic Regression, Decision Tree, linear SVM and rbf SVM. The selected features from each classifier are then combined through bagging using majority voting. This means that a feature is retained in the final set if it is selected by the majority of classifiers. The results of the majority voting feature selection for the Swell target label are summarized in \autoref{tab:majority_voting_summary}. The recommended features for each target label are presented in \autoref{tab:recommended_features}.
@@ -108,13 +104,13 @@ To determine a final set of selected features for each PQD class, which is robus
 %Refer to majority voting example table
 
 \begin{table}[htbp]
-\caption{Majority Voting Feature Selection Summary for Swell Target Label}
+\caption{Majority Voting Feature Selection Summary for the Swell PQD class}
 \label{tab:majority_voting_summary}
 \centering
 \begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}X c >{\raggedright\arraybackslash}X c}
 \hline
 \hline
-\textbf{Classifier} & \textbf{Target Label} & \textbf{Selected Features} & \textbf{Cross-Validation F1} \\
+\textbf{Classifier} & \textbf{PQD class} & \textbf{Selected Features} & \textbf{Cross-Validation F1} \\
 \hline
 Logistic Regression & Swell & F1, F3, F4, F6, F7, F8 & 0.9541 \\
 Linear SVM          & Swell & F1, F2, F3, F5         & 0.9525 \\
@@ -131,23 +127,23 @@ Decision Tree       & Swell & F1, F3                 & 0.9987 \\
 % total output table with all PQD classes and their selected features.
 
 \begin{table}[htbp]
-\caption{Recommended Features for Each Target Label}
+\caption{Recommended Features for Each PQD class}
 \label{tab:recommended_features}
 \centering
 \begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
 \hline
 \hline
-\textbf{Target Label} & \textbf{Recommended Features} \\
+\textbf{PQD class} & \textbf{Recommended Features} \\
 \hline
-Flicker          & F3, F4, F6, F7 \\
-Harmonics        & F1, F2, F3, F4 \\
-Interruption     & F1, F8 \\
 Normal           & F1, F2, F5, F7 \\
 Sag              & F1, F4, F8 \\
-Sag with harmonics   & F1, F2, F6 \\
 Swell            & F1, F3 \\
-Swell with harmonics & F1, F3 \\
+Interruption     & F1, F8 \\
 Transient        & F1, F6, F7 \\
+Harmonics        & F1, F2, F3, F4 \\
+Flicker          & F3, F4, F6, F7 \\
+Sag\_harmonics   & F1, F2, F6 \\
+Swell\_harmonics & F1, F3 \\
 \hline
 \hline
 \end{tabularx}
@@ -164,3 +160,5 @@ The selection can be verified by visualizing the selected features for each PQD 
 
 \subsection{Feature Selection Conclusion}
 % Combine the results of the previous sections. Elobarate that different features are important for different PQD classes and similar trends are visible throughout all Analysis methods. BUT, explain also, that different classification models may have different feature importances, as linear models rely on linear feature relationships, while non-linear models can capture more complex relationships etc. 
+
+The ideal subset of features will always depend on the application since different classifiers may use different features to achieve the best performance. For the goal of finding one general feature set for every PQD class, the results of the machine learning based feature selection were combined with the physical considerations and the graphical and statistical analysis. 

@@ -34,7 +34,6 @@ Solver: L-BFGS, Activation: Tanh, Hidden Layers: (128, 64, 32), Alpha: 1e-5, LR 
 \end{tabularx}
 \end{table}
 
-The confusion matrix of the best model on the test set is shown in \autoref{fig:mlp_confusion_matrix}. 
 
 \begin{figure}[htbp]
     \centering
@@ -43,7 +42,12 @@ The confusion matrix of the best model on the test set is shown in \autoref{fig:
     \label{fig:mlp_confusion_matrix}
 \end{figure}
 
-It shows that the model performs well across all PQD classes, with the highest number of misclassifications occurring between the classes Normal, Transient and Flicker. 
+The confusion matrix of the best model on the test set is shown in \autoref{fig:mlp_confusion_matrix}. It shows that the model performs well across all PQD classes, with the highest number of misclassifications occurring between the classes Normal, Transient and Flicker. This is also in agreement with the results of task 1. \autoref{fig:feature_distribution} shows the distribution of the features for the classes. For the classes Normal, Transient and Flicker, the distributions of the features are very similar, which makes it difficult for the model to distinguish between these classes. That result was also already observed in task 1 where those three classes were the most difficult to classify. 
+
+
+\textbf{Maybe add more context after T1 is done!}
+
+
 
 \subsection{Combined (Bagged) Model}
 % A bagged model should be created from the best models of the three model types using majority voting. This bagged model has to be implemented and then evaluated on the test set. The evaluation results of the bagged model should be compared to the evaluation results of the individual model types.
