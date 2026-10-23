@@ -29,41 +29,30 @@ def create_plot(output_path: Path) -> None:
     """Plot F1 against F3 for all samples and highlight Swell samples."""
     data = load_dataset(REPOSITORY_ROOT / "Code" / "data" / level for level in NOISE_LEVELS)
     swell = data["label"].eq(TARGET_LABEL)
-    text_size = 10
-
-    with plt.rc_context(
-        {
-            "font.size": text_size,
-            "axes.labelsize": text_size,
-            "xtick.labelsize": text_size,
-            "ytick.labelsize": text_size,
-            "legend.fontsize": text_size,
-        }
-    ):
-        figure, axes = plt.subplots(figsize=(3.5, 3.2))
-        axes.scatter(
-            data.loc[~swell, "F1"],
-            data.loc[~swell, "F3"],
-            s=8,
-            alpha=0.8,
-            linewidths=0,
-            label="Other PQDs",
-        )
-        axes.scatter(
-            data.loc[swell, "F1"],
-            data.loc[swell, "F3"],
-            s=10,
-            alpha=0.8,
-            linewidths=0,
-            label=TARGET_LABEL,
-        )
-        axes.set_xlabel("F1")
-        axes.set_ylabel("F3")
-        axes.legend(frameon=False)
-        figure.tight_layout()
-        output_path.parent.mkdir(parents=True, exist_ok=True)
-        figure.savefig(output_path, bbox_inches="tight")
-        plt.close(figure)
+    figure, axes = plt.subplots(figsize=(3.5, 3.2))
+    axes.scatter(
+    data.loc[~swell, "F1"],
+    data.loc[~swell, "F3"],
+    s=8,
+    alpha=0.8,
+    linewidths=0,
+    label="Other PQDs",
+    )
+    axes.scatter(
+        data.loc[swell, "F1"],
+        data.loc[swell, "F3"],
+        s=10,
+        alpha=0.8,
+        linewidths=0,
+        label=TARGET_LABEL,
+    )
+    axes.set_xlabel("F1")
+    axes.set_ylabel("F3")
+    axes.legend()
+    figure.tight_layout()
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    figure.savefig(output_path, bbox_inches="tight")
+    plt.close(figure)
 
 
 if __name__ == "__main__":
