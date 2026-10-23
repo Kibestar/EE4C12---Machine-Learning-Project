@@ -2,16 +2,39 @@
 % Explain this: Three model types are trained and evaluated for the multiclass classification of PQDs. For the training all features were used, as there is no unique subset from task 1 that is optimal for all PQD classes. Stratified 5-fold cross-validation is used to evaluate each model type and optimize the hyperparameters. 
 For the multiclass classification of PQDs, three different model types are trained and evaluated. Task one showed that there is no unique subset of features that is optimal for all PQD classes. Every feature was identified to be important for at least one PQD class. Therefore, all features are used for the training of the models. To evaluate each model type and optimize the hyperparameters, stratified 5-fold cross-validation is used. The scoring metric for the hyperparameter is a combination of the precision score for the Normal class while filtering out combinations with a too low macro average F1 score for all other PQD classes. The precision score for the Normal class is used to ensure that the model does not misclassify PQDs as Normal, which would be a critical error in a real-world application. The macro average F1 score is used to ensure that the model performs well across all PQD classes. Using the macro score is preferable since the dataset is imbalanced. The implementation is done through a custom scorer which evaluates the precision score for the Normal class in the multiclass classification.
 
+All models are goning to initially use random search for hyperparameter tuning. Reason for this is that these complexer models have a large number of hyperparameters that can be tuned. Therefore, it is not feasible to perform a grid search over all possible combinations. Instead, a random search approach is used, where a predefined number of random combinations of hyperparameters is evaluated. If the random search yields results which suggest the redundancy of certain hyperparameters, a grid search can be performed on the most promising hyperparameter combinations to further optimize the model. 
+
 The best model of each model type is then evaluated on the test set and the evaluation results are compared to each other. Finally, a bagged model is created from the best models of the three model types using majority voting. This bagged model is then evaluated on the test set and its evaluation results are compared to the evaluation results of the individual model types.
 
 \subsection{Decision Tree Classifier}
 % USE Task 2-Paul: Decision Tree (DT) notebook -> Currently only the hyperparameter tuning is done, but the notebook can be extended to include the evaluation of the best model on the test set.
 \subsection{Random Forest Classifier}
 % USE Task 2-Paul: Random Forest (RF) notebook -> Currently only the hyperparameter tuning is done, but the notebook can be extended to include the evaluation of the best model on the test set.
+\begin{table}[htbp]
+\caption{Hyperparameter Tuning Results for Random Forest / Extra Trees Classifier}
+\label{tab:rf_evaluation_results}
+\centering
+\small
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X c c}
+\hline
+\hline
+\textbf{Selected Parameters} & \textbf{Macro F1} & \textbf{Norm. Precision} \\
+\hline
+\rowcolor{highlightRow}
+n\_estimators: 316, min\_samples\_split: 18, min\_samples\_leaf: 1, max\_depth: 19, criterion: log\_loss & 0.9858 & 0.9527 \\
+n\_estimators: 377, min\_samples\_split: 20, min\_samples\_leaf: 1, max\_depth: 13, criterion: entropy & 0.9857 & 0.9527 \\
+n\_estimators: 135, min\_samples\_split: 8, min\_samples\_leaf: 7, max\_depth: 11, criterion: entropy & 0.9849 & 0.9511 \\
+n\_estimators: 407, min\_samples\_split: 9, min\_samples\_leaf: 2, max\_depth: 11, criterion: log\_loss & 0.9855 & 0.9497 \\
+n\_estimators: 220, min\_samples\_split: 19, min\_samples\_leaf: 4, max\_depth: 20, criterion: entropy & 0.9857 & 0.9497 \\
+\hline
+\hline
+\end{tabularx}
+\end{table}
+
 \subsection{Multilayer Perceptron}
 % USE Task 2-Vossi: MLP notebook -> This already includes extensive hyperparameter tuning and a first version of the evaluation of the best model on the test set. The notebook can be extended, so that its evaluation is more comparable to the other two model types.
 
-Multilayer Perceptrons (MLPs) are a class of feedforward artificial neural networks that consist of multiple layers of nodes, or neurons, which are interconnected in a directed graph. Each neuron in an MLP applies an activation function to a weighted sum of its inputs, allowing the network to learn complex, non-linear relationships between input features and output targets. To use an MLP for multiclass classification of PQDs, the model has to be trained on the dataset. As described before, this is done using stratified 5-fold cross-validation to find the best hyperparameters. MLPs come with a large number of hyperparameters that can be tuned. The most important ones are the number of hidden layers, the number of neurons in each hidden layer. In addition to that, we can also tune the activation function, the solver, the learning rate, and the regularization parameter. Having that many hyperparameters to tune, it is not feasible to perform a grid search over all possible combinations. Therefore, we use a random search approach, where a predefined number of random combinations of hyperparameters is evaluated. The best combination of hyperparameters is then used to train the final model, which is evaluated on the test set. The results of the hyperparameter tuning are shown in \autoref{tab:mlp_evaluation}. The best combination of hyperparameters is highlighted in the table. This combination was chosen since it achieved the second highest normal precision score while having a macro F1 score that is significantly higher than the best normal precision score.
+Multilayer Perceptrons (MLPs) are a class of feedforward artificial neural networks that consist of multiple layers of nodes, or neurons, which are interconnected in a directed graph. Each neuron in an MLP applies an activation function to a weighted sum of its inputs, allowing the network to learn complex, non-linear relationships between input features and output targets. To use an MLP for multiclass classification of PQDs, the model has to be trained on the dataset. As described before, this is done using stratified 5-fold cross-validation to find the best hyperparameters. MLPs come with a large number of hyperparameters that can be tuned. The most important ones are the number of hidden layers, the number of neurons in each hidden layer. In addition to that, we can also tune the activation function, the solver, the learning rate, and the regularization parameter. As explained before, random search is used to find the best combination of hyperparameters which is then used to train the final model, which is evaluated on the test set. The results of the hyperparameter tuning are shown in \autoref{tab:mlp_evaluation}. Since there where no obvious patterns visible, it was decided to not further tune the hyperparameters with grid search. The best combination of hyperparameters is highlighted in the table. This combination was chosen since it achieved the second highest normal precision score while having a macro F1 score that is significantly higher than the best normal precision score.
 
 \begin{table}[htbp]
 \caption{Hyperparameter Evaluation Results for First 5 Configurations}
