@@ -231,4 +231,4 @@ __marimo__/
 output/
 
 # Compiled PDF output (optional: keep out of git so everyone builds locally)
-*.pdf
+# *.pdf
