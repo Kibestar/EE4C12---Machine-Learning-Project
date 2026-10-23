@@ -41,7 +41,7 @@ For a machine learning classifier it is important which features carry the most 
 A graphical analysis of the features was performed next, by visualizing each feature for all noisless samples, devided into the nine PQD classes using different colors. The resulting plots are shown in \autoref{fig:feature_distribution}.
 \begin{figure}[t]
     \centering
-    \includegraphics[width=\columnwidth]{02_Plots/feature_distribution.pdf}
+    \includegraphics[]{02_Plots/feature_distribution.pdf}
     \caption{Visualization of the features (F1 to F8) for all noisless samples, plotted over the sample index and divided by PQD class using color coding.}\label{fig:feature_distribution}
 \end{figure}
 It should be noted, that before this plot, the data was already split into training and test sets (with a test size of 20\%), and then normalized using a standard scaler. The visualizations were used as a verification and extension of the physical considerations in \autoref{tab:physical_considerations}. The distinction of most considered features from the normal case is clearly visible. For example, the minimum voltage amplitude (F4) is clearly lower for the sag, sag\_harmonics and interruption PQD classes, as expected. Further, in addition to the physical considerations, it was noticed, that F1 is also different for the sag, swell and interruption PQD samples, compared to the normal case. 
@@ -57,6 +57,12 @@ The MI measures in general the amount of information that a feature provides abo
 I(X; Y) = \sum_{y \in Y} \sum_{x \in X} p(x, y) \log \left( \frac{p(x, y)}{p(x)p(y)} \right)
 \end{equation}
 These two statistical measures were used, because they provide different perspectives on the relationship between the features and the PQD classes and are easily implementable using the \texttt{sklearn.feature\_selection} library. The results of the F-Score and MI calculations are shown in \autoref{fig:feature_relevance_heatmaps}.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[]{02_Plots/feature_relevance_heatmaps.pdf}
+    \caption{Heatmaps showing the relevance of each feature for each PQD class based on the F-Score (top) and the Mutual Information (bottom). While the F-Score measures the linear relationship between the features and the PQD classes, the Mutual Information Score captures also non-linear relationships.}\label{fig:feature_relevance_heatmaps}
+\end{figure}
 
 %only training data and all noiselevels considered
 It should be noted, that from this analysis onwards all noislevels were merged into one dataset, which was shuffled and then seperated into training and test splits (with a test size of 20\%). The heatmaps in \autoref{fig:feature_relevance_heatmaps} are based only on the training data, to avoid any data leakage. The following observations could be made based on this preprocessed dataset. First, the F-Score and MI Score show similar trends, giving a high score to some of the features, that were already identified as relevant for a PQD in the previous sections. An example for this are the high F- and MI scores for F7 and F8 regarding the transient and interruption PQD classes, respectively. However, there are also some differences between the two measures, as well as some feature-PQD combinations that show a high score and were not considered before. This is especially true for the MI, that for example highlights a correlation between the F2 to F5 for the Flicker PQD class. The reason for this is, that the MI can capture non-linear relationships, that can not be captured by the F-Score, as well as the visual analysis of the feature in~\autoref{fig:feature_distribution}. For a preliminary strategy of feature selection, the features were ranked based on their F-Score and MI Score for each PQD class. The top three ranked features for each PQD class are summarized in \autoref{tab:pqd_feature_ranking}.
