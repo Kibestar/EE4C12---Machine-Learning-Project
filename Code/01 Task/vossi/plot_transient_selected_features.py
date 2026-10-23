@@ -74,5 +74,5 @@ def create_plot(output_path: Path) -> None:
 
 if __name__ == "__main__":
     create_plot(
-        REPOSITORY_ROOT / "Report" / "plots" / "transient_selected_features.pdf"
+        REPOSITORY_ROOT / "Paper - IEEE" / "02_Plots" / "transient_selected_features.pdf"
     )
