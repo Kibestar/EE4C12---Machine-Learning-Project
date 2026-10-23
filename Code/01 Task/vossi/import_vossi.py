@@ -203,6 +203,17 @@ def Classifier(clf, x_train, y_train, x_test, y_test, title="Classifier", graph=
         import matplotlib.pyplot as plt
         import seaborn as sns
 
+        plt.rcParams.update({
+            "font.family": "serif",
+            "font.serif": ["Times New Roman"],
+            "font.size": 7,           # Matches \footnotesize
+            "axes.labelsize": 8,
+            "xtick.labelsize": 8,
+            "ytick.labelsize": 8,
+            "legend.fontsize": 8,
+            "figure.titlesize": 9
+        })
+
         print(f"{title} - Iterations: {getattr(clf, 'n_iter_', 'N/A')}")
         # Create a figure with two subplots: one for the confusion matrix and one for the metrics
         fig, axes = plt.subplots(
