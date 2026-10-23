@@ -10,6 +10,35 @@ The best model of each model type is then evaluated on the holdout test set. Fin
 
 \subsection{Decision Tree Classifier}
 % USE Task 2-Paul: Decision Tree (DT) notebook -> Currently only the hyperparameter tuning is done, but the notebook can be extended to include the evaluation of the best model on the test set.
+
+\begin{table}[htbp]
+\caption{Hyperparameter Tuning Results for Decision Tree Classifier}
+\label{tab:dt_evaluation_results}
+\centering
+\small
+\begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X c c}
+\hline
+\hline
+\textbf{Selected Parameters} & \textbf{Macro f1-score} & \textbf{Norm. Precision} \\
+\hline
+\rowcolor{highlightRow}
+min\_samples\_split: 6, min\_samples\_leaf: 3, max\_depth: 12, criterion: gini & 0.9776 & 0.9413 \\
+min\_samples\_split: 6, min\_samples\_leaf: 2, max\_depth: 18, criterion: gini & 0.9769 & 0.9381 \\
+min\_samples\_split: 19, min\_samples\_leaf: 1, max\_depth: 19, criterion: entropy & 0.9769 & 0.9373 \\
+min\_samples\_split: 19, min\_samples\_leaf: 1, max\_depth: 12, criterion: gini & 0.9776 & 0.9358 \\
+min\_samples\_split: 17, min\_samples\_leaf: 1, max\_depth: 16, criterion: log\_loss & 0.9765 & 0.9358 \\
+\hline
+\hline
+\end{tabularx}
+\end{table}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{decision_tree_confusion_matrix.pdf}
+    \caption{Confusion Matrix of the Best Decision Tree Model on the Test Set. For increased readability, the diagonal elements are not annotated with the number of samples but can be easily inferred from the total number of samples in each class (149).}
+    \label{fig:dt_confusion_matrix}
+\end{figure}
+
 \subsection{Random Forest Classifier}
 % USE Task 2-Paul: Random Forest (RF) notebook -> Currently only the hyperparameter tuning is done, but the notebook can be extended to include the evaluation of the best model on the test set.
 Random Forests are an ensemble learning method that combines multiple decision trees to improve the overall performance and robustness of the model. Each decision tree is trained on a random subset of the training data and features, which helps to reduce overfitting and increase generalization. The final prediction is made by aggregating the predictions of all individual trees, through majority voting. Random Forests are particularly effective for multiclass classification tasks, as they can handle complex decision boundaries and interactions between features. In this work, a Random Forest classifier is trained on the dataset using stratified 5-fold cross-validation to find the best hyperparameters. The hyperparameters that are tuned include the number of trees in the forest (n\_estimators), the maximum depth of each tree (max\_depth), the minimum number of samples required to split an internal node (min\_samples\_split), the minimum number of samples required to be at a leaf node (min\_samples\_leaf), and the criterion used to measure the quality of a split (criterion). The results of the hyperparameter tuning are shown in \autoref{tab:rf_evaluation_results}. The best combination of hyperparameters is highlighted in the table. This combination was chosen since it achieved the highest normal precision score. 
@@ -22,7 +51,7 @@ Random Forests are an ensemble learning method that combines multiple decision t
 \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X c c}
 \hline
 \hline
-\textbf{Selected Parameters} & \textbf{Macro F1} & \textbf{Norm. Precision} \\
+\textbf{Selected Parameters} & \textbf{Macro f1-score} & \textbf{Norm. Precision} \\
 \hline
 \rowcolor{highlightRow}
 n\_estimators: 316, min\_samples\_split: 18, min\_samples\_leaf: 1, max\_depth: 19, criterion: log\_loss & 0.9858 & 0.9527 \\
@@ -40,7 +69,7 @@ n\_estimators: 220, min\_samples\_split: 19, min\_samples\_leaf: 4, max\_depth: 
 
 \begin{figure}[htbp]
     \centering
-    \includegraphics[width=\linewidth]{rf_confusion_matrix.pdf}
+    \includegraphics[width=\linewidth]{random_forest_confusion_matrix.pdf}
     \caption{Confusion Matrix of the Best Random Forest Model on the Test Set. For increased readability, the diagonal elements are not annotated with the number of samples but can be easily inferred from the total number of samples in each class (149).}
     \label{fig:rf_confusion_matrix}
 \end{figure}
@@ -49,7 +78,7 @@ n\_estimators: 220, min\_samples\_split: 19, min\_samples\_leaf: 4, max\_depth: 
 \subsection{Multilayer Perceptron}
 % USE Task 2-Vossi: MLP notebook -> This already includes extensive hyperparameter tuning and a first version of the evaluation of the best model on the test set. The notebook can be extended, so that its evaluation is more comparable to the other two model types.
 
-Multilayer Perceptrons (MLPs) are a class of feedforward artificial neural networks that consist of multiple layers of nodes, or neurons, which are interconnected in a directed graph. Each neuron in an MLP applies an activation function to a weighted sum of its inputs, allowing the network to learn complex, non-linear relationships between input features and output targets. To use an MLP for multiclass classification of PQDs, the model has to be trained on the dataset. As described before, this is done using stratified 5-fold cross-validation to find the best hyperparameters. MLPs come with a large number of hyperparameters that can be tuned. The most important ones are the number of hidden layers, the number of neurons in each hidden layer. In addition to that, we can also tune the activation function, the solver, the learning rate, and the regularization parameter. As explained before, random search is used to find the best combination of hyperparameters which is then used to train the final model, which is evaluated on the test set. The results of the hyperparameter tuning are shown in \autoref{tab:mlp_evaluation}. Since there where no obvious patterns visible, it was decided to not further tune the hyperparameters with grid search. The best combination of hyperparameters is highlighted in the table. This combination was chosen since it achieved the second highest normal precision score while having a macro F1 score that is significantly higher than the best normal precision score.
+Multilayer Perceptrons (MLPs) are a class of feedforward artificial neural networks that consist of multiple layers of nodes, or neurons, which are interconnected in a directed graph. Each neuron in an MLP applies an activation function to a weighted sum of its inputs, allowing the network to learn complex, non-linear relationships between input features and output targets. To use an MLP for multiclass classification of PQDs, the model has to be trained on the dataset. As described before, this is done using stratified 5-fold cross-validation to find the best hyperparameters. MLPs come with a large number of hyperparameters that can be tuned. The most important ones are the number of hidden layers, the number of neurons in each hidden layer. In addition to that, we can also tune the activation function, the solver, the learning rate, and the regularization parameter. As explained before, random search is used to find the best combination of hyperparameters which is then used to train the final model, which is evaluated on the test set. The results of the hyperparameter tuning are shown in \autoref{tab:mlp_evaluation}. Since there where no obvious patterns visible, it was decided to not further tune the hyperparameters with grid search. The best combination of hyperparameters is highlighted in the table. This combination was chosen since it achieved the second highest normal precision score while having a macro f1-score that is significantly higher than the best normal precision score.
 
 \begin{table}[htbp]
 \caption{Hyperparameter Evaluation Results for First 5 Configurations}
@@ -59,7 +88,7 @@ Multilayer Perceptrons (MLPs) are a class of feedforward artificial neural netwo
 \begin{tabularx}{\linewidth}{>{\raggedright\arraybackslash}X c c}
 \hline
 \hline
-\textbf{Hyperparameters} & \textbf{Macro F1} & \textbf{Norm. Precision} \\
+\textbf{Hyperparameters} & \textbf{Macro f1-score} & \textbf{Norm. Precision} \\
 \hline
 Solver: Adam, Activation: Logistic, Hidden Layers: (1024,), Alpha: 0.0001, LR Init: 0.01 & 0.9732 & 0.9585 \\
 \rowcolor{highlightRow}
