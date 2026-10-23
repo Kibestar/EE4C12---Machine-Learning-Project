@@ -10,6 +10,8 @@ The best model of each model type is then evaluated on the test set and the eval
 % USE Task 2-Paul: Decision Tree (DT) notebook -> Currently only the hyperparameter tuning is done, but the notebook can be extended to include the evaluation of the best model on the test set.
 \subsection{Random Forest Classifier}
 % USE Task 2-Paul: Random Forest (RF) notebook -> Currently only the hyperparameter tuning is done, but the notebook can be extended to include the evaluation of the best model on the test set.
+Random Forests are an ensemble learning method that combines multiple decision trees to improve the overall performance and robustness of the model. Each decision tree is trained on a random subset of the training data and features, which helps to reduce overfitting and increase generalization. The final prediction is made by aggregating the predictions of all individual trees, through majority voting. Random Forests are particularly effective for multiclass classification tasks, as they can handle complex decision boundaries and interactions between features. In this work, a Random Forest classifier is trained on the dataset using stratified 5-fold cross-validation to find the best hyperparameters. The hyperparameters that are tuned include the number of trees in the forest (n\_estimators), the maximum depth of each tree (max\_depth), the minimum number of samples required to split an internal node (min\_samples\_split), the minimum number of samples required to be at a leaf node (min\_samples\_leaf), and the criterion used to measure the quality of a split (criterion). The results of the hyperparameter tuning are shown in \autoref{tab:rf_evaluation_results}. The best combination of hyperparameters is highlighted in the table. This combination was chosen since it achieved the highest normal precision score. 
+
 \begin{table}[htbp]
 \caption{Hyperparameter Tuning Results for Random Forest / Extra Trees Classifier}
 \label{tab:rf_evaluation_results}
@@ -30,6 +32,17 @@ n\_estimators: 220, min\_samples\_split: 19, min\_samples\_leaf: 4, max\_depth: 
 \hline
 \end{tabularx}
 \end{table}
+
+
+\autoref{fig:rf_confusion_matrix} shows the confusion matrix of the best Random Forest model on the test set. The model performs well across all PQD classes, with the highest number of misclassifications occurring between the classes Normal, Transient and Flicker. 
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=\linewidth]{rf_confusion_matrix.pdf}
+    \caption{Confusion Matrix of the Best Random Forest Model on the Test Set. For increased readability, the diagonal elements are not annotated with the number of samples but can be easily inferred from the total number of samples in each class (149).}
+    \label{fig:rf_confusion_matrix}
+\end{figure}
+
 
 \subsection{Multilayer Perceptron}
 % USE Task 2-Vossi: MLP notebook -> This already includes extensive hyperparameter tuning and a first version of the evaluation of the best model on the test set. The notebook can be extended, so that its evaluation is more comparable to the other two model types.
