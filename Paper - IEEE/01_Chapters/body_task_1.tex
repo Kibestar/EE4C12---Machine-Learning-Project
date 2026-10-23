@@ -56,7 +56,7 @@ The MI measures in general the amount of information that a feature provides abo
 \begin{equation}\label{eq:feature_MI-score} % based on shannon entropy
 I(X; Y) = \sum_{y \in Y} \sum_{x \in X} p(x, y) \log \left( \frac{p(x, y)}{p(x)p(y)} \right)
 \end{equation}
-These two statistical measures were used, because they provide different perspectives on the relationship between the features and the PQD classes and are easily implementable using the \texttt{sklearn.feature\_selection} library. The results of the F-Score and MI calculations are shown in \autoref{fig:feature_relevance_heatmaps}.
+These two statistical measures were used, because they provide different perspectives on the relationship between the features and the PQD classes and are easily implementable using the \texttt{sklearn.feature\_selection} library. The results of the F-Score and MI calculations are shown in \autoref{fig:feature_relevance_heatmaps} as heatmaps.
 \begin{figure*}[t]
     \centering
     \includegraphics[width=0.9\textwidth]{02_Plots/feature_relevance_heatmaps.pdf}
