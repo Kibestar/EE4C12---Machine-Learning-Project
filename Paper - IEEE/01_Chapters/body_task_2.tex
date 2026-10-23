@@ -4,7 +4,7 @@ For the multiclass classification of PQDs, three different model types are train
 
 To evaluate each model type and optimize the hyperparameters, stratified 5-fold cross-validation is used. As scoring metric for each models hyperparameter optimization, the precision score for the Normal class, averaged from the different validation folds is used. Additionally, hyperparameter sets, that result in a too low average f1-macro score ($<0.9$) for any other PQD class are filtered out. This to ensure that the missclassifictation PQDs as Normal is minimized, as an undetected disturbance in the system can have critical consequences in a real-world power system. The average f1-macro score is used to ensure that the model performs well across all PQD classes. The implementation is done through a custom scorer which evaluates the precision score for the Normal class in each multiclass classification.
 
-All models initially use a random search approach for hyperparameter tuning. Reason for this is that the non-linear models DT, RF and MLP have a large number of hyperparameters that can be tuned. Therefore, it is not feasible to perform a grid search over a large parameter space using the available computational resources. Instead, a random search approach is used, where a predefined number of random combinations of hyperparameters is evaluated. If the random search yields results which suggest the redundancy of certain hyperparameters, a grid search can be performed on the most promising hyperparameter combinations to further optimize the model. 
+All models initially use a random search approach for hyperparameter tuning. Reason for this is that the non-linear models DT, RF and MLP have a large number of hyperparameters that can be tuned. Therefore, it is not feasible to perform a grid search over a large parameter space using the available computational resources. Instead, a random search approach is used, where a predefined number of random combinations of hyperparameters is evaluated. If the random search yields results which suggest the redundancy of certain hyperparameters, a grid search can be performed on the most promising hyperparameter combinations to further optimize the model. The parameter space for the random search is defined based on experience from the code labs and the suggestions in the scikit-learn documentation as well as~\cite{ML_Refined_book}. 
 
 The best model of each model type is then evaluated on the holdout test set. Finally, a bagged model is created using the best hyperparameter sets for the three model types and combining their predictions using majority voting. This bagged model is then also evaluated on the holdout test set.
 
@@ -147,3 +147,33 @@ MLP & 0.9806 & 0.9276 \\
     \caption{Confusion Matrix of the Bagged Model on the Test Set. For increased readability, the diagonal elements are not annotated with the number of samples but can be easily inferred from the total number of samples in each class (149).}
     \label{fig:bagged_confusion_matrix}
 \end{figure}
+
+\subsection{Noise Robustness of the Bagged Model}
+Lastly, the noise robustness of the bagged model is evaluated, by using each of the three optimal model types to classify the same test set, devided into the different noise levels.It should be noted, that the test split did not include fully equal parts of the different noise levels, as the data was split randomly. This can be reasoned for training purposes, as in a power system application the noise level of the signal is not always known in advance and also expected to vary randomly. The results of the noise robustness evaluation are shown in~\autoref{tab:noise_performance} and visualized in~\autoref{fig:noise_robustness}.
+\begin{table}[htbp]
+\caption{Bagged model performance metrics across different noise levels.}
+\label{tab:noise_performance}
+\centering
+\begin{tabularx}{\columnwidth}{l >{\centering\arraybackslash}X >{\centering\arraybackslash}X >{\centering\arraybackslash}X}
+\hline
+\hline
+\textbf{Noise Level} & \textbf{Samples} & \textbf{Macro F1} & \textbf{Normal Precision} \\
+\hline
+Noiseless & 267 & 0.9967 & 1.0000 \\
+50 dB     & 249 & 0.9920 & 1.0000 \\
+40 dB     & 271 & 0.9960 & 1.0000 \\
+30 dB     & 284 & 0.9858 & 0.9268 \\
+20 dB     & 270 & 0.9496 & 0.9130 \\
+\hline
+\hline
+\end{tabularx}
+\end{table}
+
+%figure 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[]{02_Plots/soft_voting_ensemble_robustness.pdf}
+    \caption{Performance of the bagged model on the holdout test data separated by different noise levels.}\label{fig:noise_robustness}
+\end{figure}
+
+It can be seen that the bagged model performs very well for noise levels below 40 dB, with a macro f1-score above 0.99 and a normal precision score of roughly 1.0. For higher noise levels, the performance of the model decreases, as expected. However, a reasonable performance is still achieved for noise levels of 30 dB and 20 dB, showing that the bagged model is robust against noise in the input signals up to a certain level and can also be used for PQD classification of noise overlayed data.
