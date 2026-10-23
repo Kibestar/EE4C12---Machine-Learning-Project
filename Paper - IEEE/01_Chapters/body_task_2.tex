@@ -112,14 +112,14 @@ Solver: L-BFGS, Activation: Tanh, Hidden Layers: (128, 64, 32), Alpha: 1e-5, LR 
     \caption{Confusion Matrix of the Best MLP Model on the Test Set. For increased readability, the diagonal elements are not annotated with the number of samples but can be easily inferred from the total number of samples in each class (149).}\label{fig:mlp_confusion_matrix}
 \end{figure}
 
-The confusion matrix of the best model on the test set is shown in~\autoref{fig:mlp_confusion_matrix}. As the other models, the mlp model performs well across all PQD classes, but the domain of misclassifications is again between the classes Normal, Transient and Flicker.  
+The confusion matrix of the best hyperparameter set on the holdout test split is shown in~\autoref{fig:mlp_confusion_matrix}. As the other models, the mlp model performs well across all PQD classes, but the domain of misclassifications is again between the classes Normal, Transient and Flicker.  
 
 \subsection{Combined (Bagged) Model}
-The final results of the three model types are compared in~\autoref{tab:task2_final_validation}. The results show overall a very good performance in terms of the macro f1-score. The best model is the Random Forest model, which achieved a macro f1-score of 0.9822. In terms of the normal precision score, they all perform well but not good enough to be used in a real-world application. Here, the best model is again the Random Forest model, which achieved a normal precision score of 0.9281. To achieve a better performance, a bagged model is created from the best models of the three model types using soft voting which combines the probabilities of the individual models. The bagged model is then evaluated on the test set and the results are compared to the individual models.
+The final results of the three model types are compared in~\autoref{tab:task2_final_validation}. The results show a very good individual performance in terms of the macro f1-score. The best model is the Random Forest model, which achieved a macro f1-score of 0.9822. In terms of the normal precision score, they all perform well but with room for improvement, considering a real-world application in a power system. Here, the best model is again the Random Forest model, which achieved a normal precision score of 0.9281. To achieve a better performance, a bagged model is created using the best model settings of the three model types and aggregating their results via soft voting. This combines the probabilities of the individual models to decide on the overall highest class probability for sample. The bagged model is again evaluated on the holdout test set and the results are compared to the individual models.
 % A bagged model should be created from the best models of the three model types using majority voting. This bagged model has to be implemented and then evaluated on the test set. The evaluation results of the bagged model should be compared to the evaluation results of the individual model types.
 
 \begin{table}[htbp]
-\caption{Final Validation Results for the Task 2 Models}
+\caption{Final Results for the Task 2 Models on the Holdout Test Set. The Bagged Model is created using the best respective hyperparameter sets of the three model types and aggregation via soft voting.}
 \label{tab:task2_final_validation}
 \centering
 \small
@@ -139,8 +139,7 @@ MLP & 0.9806 & 0.9276 \\
 \end{tabularx}
 \end{table}
 
-\autoref{tab:task2_final_validation} shows that the bagged model indeed outperforms the individual models in terms of both the macro f1-score and the normal precision score. The bagged model achieved a macro f1-score of 0.9844 and a normal precision score of 0.9412. While the macro f1-score is only slightly increased compared to the best individual model, the normal precision score is significantly improved. This shows that the individual models where struggling with different datapoints which could be correctly classified by the other models. The bagged model is able to combine the strengths of the individual models and achieve a better overall performance. The confusion matrix of the bagged model on the test set is shown in \autoref{fig:bagged_confusion_matrix}. 
-
+\autoref{tab:task2_final_validation} shows that the bagged model indeed outperforms the individual models in terms of both the macro f1-score and the normal precision score. The bagged model achieved a macro f1-score of 0.9844 and a normal precision score of 0.9412. While the macro f1-score is only slightly increased compared to the best individual model, the normal precision score is significantly improved. This shows that the individual models where struggling with different datapoints which could be correctly classified by the other models. The bagged model is able to combine the strengths of the individual models and achieve a better overall performance. Lastly, the confusion matrix of the bagged model on the test set is shown in~\autoref{fig:bagged_confusion_matrix}. 
 
 \begin{figure}[htbp]
     \centering
