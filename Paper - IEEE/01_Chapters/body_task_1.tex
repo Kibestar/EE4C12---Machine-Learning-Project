@@ -83,7 +83,7 @@ Swell\_harmonics & F1, F3, F6 & F3, F1, F6 \\
 \end{tabularx}
 \end{table}
 
-\subsection{Recursive Feature Elimination with Boosting}
+\subsection{Feature Elimination using binary classification performance}
 % Take the full dataset with all features. Start with 7/8 features and calc. F1 score from CV. Do this for all permutations. Find out which gives the best improvement in F1 and drop it. Repeat for the remaining 7 feature by doing all 6/7 feature combinations. --> continue until no F1 score improvement happens.
 
 % Explain algortihm, refer to block diagram of the algorithm.
@@ -128,7 +128,7 @@ Decision Tree       & Swell & F1, F3                 & 0.9987 \\
 % total output table with all PQD classes and their selected features.
 
 \begin{table}[htbp]
-\caption{Recommended Features for Each PQD class}
+\caption{Recommended Features for the binary classification of each PQD class. The recommended features are based on the majority voting of the feature selection results from four different classifiers: Logistic Regression, Decision Tree, linear SVM and rbf SVM.}
 \label{tab:recommended_features}
 \centering
 \begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}X >{\raggedright\arraybackslash}X}
@@ -150,7 +150,8 @@ Swell\_harmonics & F1, F3 \\
 \end{tabularx}
 \end{table}
 
-The selection can be verified by visualizing the selected features for each PQD class. \autoref{fig:swell_features} shows the distribution of the selected features for the Swell PQD class. It can be seen that the selected features F1 and F3 show a clear difference between the Swell and all other PQD classes, which confirms their importance for the classification of this PQD class.
+Apart from a few exceptions, the recommended features for each PQD class are in line with the physical considerations,as well as the graphical and statistical analysis. Deceisive features, such as F1, that contain a lot of information about the PQD classes (e.g., see~\autoref{fig:feature_relevance_heatmaps}), can be found in all but one of the recommended feature sets. It can also be observed, that the different PQD classes have a different number of recommended features. This is due to the fact, that some PQD classes have a more distinct relationship with a specific feature, such as the interruption PQD class with F8. On the other hand, some PQD classes, such as the Flicker, require a combination of multiple features, as well as a non-linear model to achieve a good classification performance.
+The selection can be verified by visualizing the selected features for each PQD class. Examplary,~\autoref{fig:swell_features} shows the distribution of the selected features for the Swell PQD class. It can be seen observed that F1 and F3 are sufficient to distinguish the Swell PQD class from all other PQD classes, which explains the high performance of the classifiers using only these two features.
 
 \begin{figure}[htbp]
     \centering
@@ -162,4 +163,4 @@ The selection can be verified by visualizing the selected features for each PQD 
 \subsection{Feature Selection Conclusion}
 % Combine the results of the previous sections. Elobarate that different features are important for different PQD classes and similar trends are visible throughout all Analysis methods. BUT, explain also, that different classification models may have different feature importances, as linear models rely on linear feature relationships, while non-linear models can capture more complex relationships etc. 
 
-The ideal subset of features will always depend on the application since different classifiers may use different features to achieve the best performance. For the goal of finding one general feature set for every PQD class, the results of the machine learning based feature selection were combined with the physical considerations and the graphical and statistical analysis. 
+The ideal subset of features will always depend on the application since different types of classifiers may archieve optimal performance with different feature sets (e.g., linear vs. non-linear models). For the goal of finding one general feature set for every PQD class, the results of all analysis methods were compared with each other. Since the feature elimination using binary classification performance is the most structured and generalized approach, used for the feature selection, its resulting feature sets (see Table~\ref{tab:recommended_features}) can be interpreted as the final recommendation for the feature selection. These sets are in strong agreement with the other anlysis and provide good classification performance with compareatively low computational effort.
