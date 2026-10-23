@@ -1,7 +1,7 @@
 \section{Feature Selection for Recognition of PQDs}
 The eight features in~\autoref{tab:extracted_features} were extracted from the PQD signals using S-transform and statistical analysis. A machine learning model can use these features to classify the PQDs into their respective classes. However, not all features may be equally important for the classification of every PQD class. Thus, as a first step, feature selection is performed to identify the most relevant features for each PQD class. For this, first physical relationships between the features and the PQDs are analyzed. Then, a graphical and statistical analysis of the features is performed. Finally, the features are selected based on a binary classification performance analysis similar to boosting. The results of the feature selection are summarized in the end of this section.
 \subsection{Physical Feature-PQD Relationships}
-%
+Initially, before analyizing the class data, the physical relationships between the extracted S-transform features and the PQD classes were considered. For this, it was estimated for each PQD class, if a feature is expected to show a difference from the normal case based on electrical considerations. The results of this analysis are summarized in \autoref{tab:physical_considerations}.   
 \begin{table}[htbp]
 \caption{Summary of physical (electrical) considerations across PQD classes. The markers indicate, if a feature is physically expected to show a difference from the normal case for each PQD. A \ensuremath{\times} indicates that this is likely not the case, a \ensuremath{\circ} indicates that this is possible, and a \ensuremath{\checkmark} indicates that this feature is likely to show a difference to the normal case.}
 \label{tab:physical_considerations}
@@ -12,18 +12,30 @@ The eight features in~\autoref{tab:extracted_features} were extracted from the P
 \textbf{PQD Class} & \textbf{F1} & \textbf{F2} & \textbf{F3} & \textbf{F4} & \textbf{F5} & \textbf{F6} & \textbf{F7} & \textbf{F8} \\
 \hline
 Normal              & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} \\
-Sag                 & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\times} \\
-Swell               & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\times} \\
-Interrupt           & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\checkmark} \\
-Transient     & \ensuremath{\circ}  & \ensuremath{\circ}  & \ensuremath{\circ}  & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\circ} & \ensuremath{\checkmark} & \ensuremath{\circ}  \\
+Sag                 & \ensuremath{\circ} & \ensuremath{\circ}  & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\circ} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\circ} \\
+Swell               & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\checkmark} & \ensuremath{\circ} & \ensuremath{\circ} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\times} \\
+Interrupt           & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\circ} & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\checkmark} \\
+Transient     & \ensuremath{\times}  & \ensuremath{\circ}  & \ensuremath{\times}  & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\circ} & \ensuremath{\checkmark} & \ensuremath{\circ}  \\
 Harmonics           & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} \\
 Flicker             & \ensuremath{\times} & \ensuremath{\circ}  & \ensuremath{\circ}  & \ensuremath{\circ}  & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} & \ensuremath{\times} \\
-Sag\_harmonics   & \ensuremath{\checkmark} & \ensuremath{\circ}  & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} \\
-Swell\_harmonics & \ensuremath{\checkmark} & \ensuremath{\circ}  & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} \\
+Sag\_harmonics   & \ensuremath{\checkmark} & \ensuremath{\circ}  & \ensuremath{\times} & \ensuremath{\checkmark} & \ensuremath{\circ} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} \\
+Swell\_harmonics & \ensuremath{\checkmark} & \ensuremath{\circ}  & \ensuremath{\checkmark} & \ensuremath{\times} & \ensuremath{\circ} & \ensuremath{\checkmark} & \ensuremath{\checkmark} & \ensuremath{\times} \\
 \hline
 \hline
 \end{tabularx}
 \end{table}
+Starting with the normal case, trivially, none of the features is expected to show a difference. For the other PQD classes, a reasoning is provided as follows:
+\begin{itemize}
+    \item \textbf{Sag:} The voltage is reduced temporarily, due to a fault in the power system. Thus, most predominently, the expected minimal voltage amplitude is lower (F4). Additionally, depending on the duration of the sag, the maximum voltage amplitude (F3) might also be lower and number of points near zero (F8) might thus be higher. The standart deviation of the voltage (F2) might also be higher, because of the different voltage levels.
+    \item \textbf{Swell:} The voltage is increased, which is expected to increase the maximum voltage amplitude (F3) and potentially also the minimum voltage amplitude (F4). Again, as for the sag, the TmA standard deviation (F2) might also be higher.
+    \item \textbf{Interruption:} The voltage is interrupted, which is expected to lead to a higher number of points near zero (F8), a higher standard deviation of the voltage (F2), and a lower minimum voltage amplitude (F4). 
+    \item \textbf{Transient:} A transient is most importantly characterized by an increased high frequency (F7) and potentially also medium frequency content (F6). 
+    \item \textbf{Harmonics:} Harmonics are expected to lead to an increased amplitude of the third harmonic (F1) and an increased higher frequency content (F6, F7).
+    \item \textbf{Flicker:} A varying voltage amplitude, as in FLicker, does not have a distinct correlation with any of the features. However, it is expected to potentially lead to an increased standard deviation of the voltage amplitude (F2) and a change in the maximum, as well as the minimum voltage amplitudes (F3, F4).
+    \item \textbf{Sag with harmonics:} Since this PQD is a combination of a sag and harmonics, the expected features can be derived from their individual effects. Thus, the features expected to show a difference to the normal case, consider the sag features (F4, F2 and potentially F3, F8), as well as the harmonics features (F1, F6, F7).
+    \item \textbf{Swell with harmonics:} Similarly, the expected features for this PQD can be derived from combining the individual effects of swell (F3, F4 and potentially F2), as well as harmonics (F1, F6, F7).
+\end{itemize}
+For a machine learning classifier it is important which features carry the most information for each specific PQD class. To determine this, the physical considerations are a starting point, but a more detailed data analysis is required. Especially, it has to be noted, that although a deviation from the normal case for a feature is an indicator for an issue in the power system, it does not necessarily give any information about the specific type of PQD. A feature, that is expected to show a distinct difference for multiple PQD classes (e.g. F7), might not be as useful for the multi class classification, as a feature that is strongly correlated with only one PQD class (e.g. F8).
 \subsection{Graphical Feature Analysis}
 % Use Task 1-Paul: Feature visualization notebook 
 \begin{figure}[t]
